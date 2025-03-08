@@ -1,0 +1,57 @@
+/* General Navigation Styling */
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif; /* Consistent font family with Home component */
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #FFD700; /* Gold color on hover */
+  transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+/* Navigation Links container (Desktop) */
+.nav-links {
+  display: flex;
+  gap: 2rem;
+}
+
+@media (max-width: 600px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+/* Drawer Styles (Mobile View) */
+.MuiDrawer-paper {
+  background-color: #2c3e50; /* Dark background for drawer */
+  color: white;  /* White text */
+}
+
+.MuiDrawer-paper a {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  font-family: 'Poppins', sans-serif;
+  text-decoration: none;
+  padding: 15px;
+  display: block;
+}
+
+.MuiDrawer-paper a:hover {
+  color: #FFD700;  /* Gold color on hover */
+  transform: scale(1.05);
+  text-decoration: underline;
+}
+
+/* Styling for Instagram Icon */
+.MuiIconButton-root {
+  transition: transform 0.3s ease;
+}
+
+.MuiIconButton-root:hover {
+  transform: scale(1.1);  /* Slight zoom effect for Instagram icon */
+}

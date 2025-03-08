@@ -1,0 +1,30 @@
+/* Video Container */
+.video-container {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio (height = 9/16 * width) */
+  border-radius: 12px; /* Rounded corners */
+  overflow: hidden; /* Ensure rounded corners are visible */
+  background-color: #000; /* Black background for better contrast */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover effect */
+}
+
+.video-container:hover {
+  transform: scale(1.02); /* Slight zoom on hover */
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+}
+
+/* React Player */
+.react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 12px; /* Match container's rounded corners */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .video-container {
+    padding-top: 75%; /* Adjust aspect ratio for smaller screens */
+  }
+}
