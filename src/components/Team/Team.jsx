@@ -13,7 +13,7 @@ const Team = () => {
   useEffect(() => {
     const fetchCaptains = async () => {
       try {
-        const capData = await fetch(`${strapiApiUrl}/api/t-eams?populate=*`);
+        const capData = await fetch(`${strapiApiUrl}/t-eams?populate=*`);
         if (capData.ok) {
           const captains = await capData.json();
           setCaptains(captains.data);
