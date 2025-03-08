@@ -14,7 +14,7 @@ const Section1 = () => {
         return response.json();
       })
       .then((data) => {
-        const videoUrl = `${strapiApiUrl}${data.data.Video[0].url}`;
+        const videoUrl = `${data.data.Video[0].url}`;
         setTitle(data.data.Title);
         setUrl(videoUrl);
       })
