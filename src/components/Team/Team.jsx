@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Collapse, Button, Card, CardContent, Typography, Box, Fade } from '@mui/material';
+import {strapiApiUrl} from '../../config/api'
 
 const Team = () => {
   const [expanded, setExpanded] = useState(false);
@@ -12,7 +13,7 @@ const Team = () => {
   useEffect(() => {
     const fetchCaptains = async () => {
       try {
-        const capData = await fetch('http://localhost:1337/api/t-eams?populate=*');
+        const capData = await fetch(`${strapiApiUrl}/api/t-eams?populate=*`);
         if (capData.ok) {
           const captains = await capData.json();
           setCaptains(captains.data);
