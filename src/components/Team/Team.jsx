@@ -112,7 +112,7 @@ const Team = () => {
                   </Typography>
                   <Box
                     component="img"
-                    src={`http://localhost:1337${c.captainImage.formats.thumbnail.url}`}
+                    src={`${strapiApiUrl}${c.captainImage.formats.thumbnail.url}`}
                     alt={c.captainName}
                     sx={{
                       width: '100%',

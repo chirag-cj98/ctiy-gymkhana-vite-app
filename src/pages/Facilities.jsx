@@ -9,7 +9,7 @@ const Facilities = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${strapiApiUrl}/facilities?populate=*`)
+    fetch(`/facilities?populate=*`)
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
@@ -94,7 +94,7 @@ const Facilities = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={`http://localhost:1337${fac.facilityImage.url}`}
+                  image={`${strapiApiUrl}${fac.facilityImage.url}`}
                   alt={fac.facilityName}
                   sx={{
                     borderTopLeftRadius: '10px',
