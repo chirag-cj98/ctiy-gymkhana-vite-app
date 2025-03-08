@@ -54,7 +54,7 @@ const About = () => {
                   <CardMedia
                     component="img"
                     height="200"
-                    image={`http://localhost:1337${c.image.formats.thumbnail.url}`}
+                    image={`${c.image.formats.thumbnail.url}`}
                     alt={c.name}
                     className="coach-image"
                   />
