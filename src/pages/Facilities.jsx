@@ -9,7 +9,7 @@ const Facilities = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`/facilities?populate=*`)
+    fetch(`${strapiApiUrl}/facilities?populate=*`)
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
