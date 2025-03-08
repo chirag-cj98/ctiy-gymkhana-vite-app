@@ -4,7 +4,7 @@ const apiConfig = {
       strapiApiUrl: "http://localhost:1337/api",
     },
     production: {
-      strapiApiUrl: "https://joyful-sharing-7d3839d273.strapiapp.com/api",
+      strapiApiUrl: "https://joyful-sharing-7d3839d273.strapiapp.com",
     },
   };
   
