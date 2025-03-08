@@ -131,7 +131,7 @@ const Gallery = () => {
                     }}
                   >
                     <LazyLoadImage
-                      src={`${strapiApiUrl}${image.gallery.url}`}
+                      src={`${image.gallery.url}`}
                       alt={image.title || 'Gallery Image'}
                       effect="blur"
                       width="100%"

@@ -94,7 +94,7 @@ const Facilities = () => {
                 <CardMedia
                   component="img"
                   height="200"
-                  image={`${strapiApiUrl}${fac.facilityImage.url}`}
+                  image={`${fac.facilityImage.url}`}
                   alt={fac.facilityName}
                   sx={{
                     borderTopLeftRadius: '10px',

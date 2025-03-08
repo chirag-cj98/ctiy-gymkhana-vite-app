@@ -122,7 +122,7 @@ const Training = () => {
                     }}
                   >
                     {d.video.url && (
-                      <VideoPlayer url={`${strapiApiUrl}${d.video.url}`} />
+                      <VideoPlayer url={`${d.video.url}`} />
                     )}
                     <Typography
                       variant="h6"

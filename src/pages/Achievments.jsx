@@ -89,7 +89,7 @@ const Achievements = () => {
                 }}
               >
                 <img
-                  src={`http://localhost:1337${a.achievementImg.url}`}
+                  src={`${a.achievementImg.url}`}
                   alt={a.description}
                   style={{
                     width: '100%',
