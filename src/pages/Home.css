@@ -1,7 +1,8 @@
 /* General Home Styling */
 .home-container {
-    background: url('../assets/app-bg.jpg') no-repeat center center fixed; /* Path to your image in the assets folder */
-    background-size: cover; /* Ensure the image covers the entire background */
+    /* background: url('../assets/app-bg.jpg') no-repeat center center fixed; Path to your image in the assets folder */
+    /* background-size: cover; Ensure the image covers the entire background */
+    background-color: black;
     padding-top: 30px;
     padding-bottom: 40px;
     color: white;
@@ -10,9 +11,35 @@
   }
   
   .home-title-box {
-    text-align: center;
+    text-align: right;
     margin-bottom: 40px;
-    background: rgba(26, 26, 26, 0.8); /* Semi-transparent black background for better readability */
+    /* background: rgba(26, 26, 26, 0.8); Semi-transparent black background for better readability */
+    /* background: radial-gradient(circle, rgb(248, 228, 113) 0%, #ffa808 150%); */
+    background-image: url('../assets/cgca.png'), radial-gradient(circle, rgb(248, 228, 113) 0%, #ffa808 150%);
+    background-repeat: no-repeat, no-repeat;
+    background-position: left , center;
+    background-size: 25%, 100%;
+    /* background: 
+        radial-gradient(circle, 
+            rgba(255, 0, 0, 0) 0%, 
+            rgba(255, 0, 0, 0) 20%, 
+            gold 21%, 
+            gold 22%, 
+            rgba(255, 0, 0, 0) 23%,
+            rgba(255, 0, 0, 0) 40%, 
+            lightblue 41%,
+            lightblue 42%,
+            rgba(255, 0, 0, 0) 43%,
+            rgba(255, 0, 0, 0) 60%,
+            lightgreen 61%,
+            lightgreen 62%,
+            rgba(255, 0, 0, 0) 63%,
+            rgba(255, 0, 0, 0) 80%,
+            purple 81%,
+            purple 82%,
+            rgba(255, 0, 0, 0) 83%,
+            rgba(255, 0, 0, 0) 100%
+        ); */
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
@@ -22,29 +49,43 @@
   
   .home-title {
     font-size: 3rem;
-    font-weight: 800;
-    color: #FFD700;
+    color: #ff2d2d;
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    animation: glow 3s infinite ease-in-out; 
+    /* animation: glow 3s infinite ease-in-out;  */
     /* Smoother and longer glow */
   }
+
+  
   
   .home-description {
     font-size: 1.2rem;
-    color: #b0b0b0;
+    color: #111;
     font-weight: 400;
     margin-bottom: 30px;
     line-height: 1.6;
     transition: color 0.3s ease;
-    animation: glow 3s infinite ease-in-out; /* Smoother and longer glow */
+    /* animation: expand 3s infinite ease-in-out;  */
   }
   
-  .home-description:hover {
-    color: #ffffff; /* Hover effect */
-  }
+  /* .home-description:hover {
+    color: #b32929; Hover effect
+  } */
   
+
+  @keyframes expand {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
   /* Smoother Glowing Text Animation */
   @keyframes glow {
     0% {

@@ -27,7 +27,7 @@
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    animation: glow 3s infinite ease-in-out; /* Smoother and longer glow */
+    /* animation: glow 3s infinite ease-in-out; */
   }
   
   .contact-description {
@@ -37,7 +37,7 @@
     margin-bottom: 30px;
     line-height: 1.6;
     transition: color 0.3s ease;
-    animation: glow 3s infinite ease-in-out; /* Smoother and longer glow */
+    /* animation: glow 3s infinite ease-in-out;  */
   }
   
   .contact-description:hover {
@@ -89,7 +89,7 @@
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    animation: glow 3s infinite ease-in-out; /* Smoother and longer glow */
+    /* animation: glow 3s infinite ease-in-out;  */
   }
   
   .info-text {

@@ -18,15 +18,20 @@ const Nav = () => {
     <AppBar 
       position="sticky" 
       sx={{ 
-        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', 
-        backgroundColor: 'rgba(0, 0, 0, 0.8)', // Dark background
-        color: 'white' 
-      }}
+        boxShadow: '0 4px 8px rgba(255, 255, 255, 0.49)', 
+        backgroundColor: 'rgb(37, 35, 35)', // Yellow background
+        color: 'red',
+        marginTop: '-8px',
+        width: '100%',
+        padding: '10px',
+        marginX: '0',
+        opacity: 1, 
+      }  
+    }
     >
-      <Container>
+      <Container maxWidth="xl">
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             {/* Logo */}
             <Avatar
               src={logo} // Use your logo here
@@ -40,14 +45,26 @@ const Nav = () => {
             />
 
             {/* Title */}
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#FFD700', fontFamily: 'Poppins, sans-serif' }}>
-              City Gymkhana {/* Gold Text */}
+            <Typography variant="h4" sx={{
+              fontSize: {
+                xs: '1.2rem', // Font size for mobile
+                sm: '2rem', // Font size for small screens
+              }, 
+              fontWeight: '700', 
+              backgroundImage: 'linear-gradient(to right, red 0%, yellow 70%, gold 30%)', 
+              WebkitBackgroundClip: 'text', 
+              backgroundClip: 'text', 
+              color: 'transparent', 
+              fontFamily: 'Charm, cursive'}}>
+
+                City Gymkhana {/* Gold Text */}
+
             </Typography>
           </Box>
 
-          {/* NavLinks for Desktop */}
+            {/* NavLinks for Desktop */}
           <Box className="nav-links" sx={{ display: { xs: 'none', sm: 'flex' }, gap: 3 }}>
-            <NavLink to="/" className="nav-link">Home</NavLink>
+            <NavLink to="/" className="nav-link" style={{paddingLeft: '2rem'}}>Home</NavLink>
             <NavLink to="/about" className="nav-link">About</NavLink>
             <NavLink to="/facility" className="nav-link">Facility</NavLink>
             <NavLink to="/contact-us" className="nav-link">Contact</NavLink>
@@ -58,8 +75,9 @@ const Nav = () => {
               className="nav-link"
               target="_blank"
               rel="noopener noreferrer"
+              style={{paddingRight: '2rem'}}
             >
-             Feedback 
+            Feedback 
             </NavLink>
           </Box>
 
@@ -86,7 +104,7 @@ const Nav = () => {
         onClose={toggleDrawer} 
         sx={{
           '& .MuiDrawer-paper': {
-            backgroundColor: '#2c3e50',  // Dark background for the drawer
+            backgroundColor: '#c70404',  // Dark background for the drawer
             color: 'white',  // White text
             width: 250,  // Drawer width
             transition: 'all 0.3s ease',  // Smooth transition
