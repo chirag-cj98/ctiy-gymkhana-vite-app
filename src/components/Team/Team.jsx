@@ -16,6 +16,7 @@ const Team = () => {
         const capData = await fetch(`${strapiApiUrl}/t-eams?populate=*`);
         if (capData.ok) {
           const captains = await capData.json();
+          console.log(captains)
           setCaptains(captains.data);
         }
       } catch (err) {

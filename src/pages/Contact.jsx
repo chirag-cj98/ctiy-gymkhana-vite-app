@@ -14,7 +14,7 @@ const Contact = () => {
       <Container maxWidth="xl">
         <Fade in={true} timeout={1500}>
           <Box className="contact-content">
-            <Typography variant="h2" className="contact-title glowing-text">
+            <Typography variant="h2" className="contact-title glowing-text" sx={{fontFamily: "Open Sans, sans-serif", fontOpticalSizing: "auto", fontWeight: 700, fontVariationSettings: "wdth 100"}}>
               Find Us
             </Typography>
             <Typography variant="h6" className="contact-description glowing-text">
@@ -53,7 +53,7 @@ const Contact = () => {
 
           {/* Contact Details Section */}
           <Box className="contact-info">
-            <Typography variant="h4" className="info-title glowing-text">
+            <Typography variant="h4" className="info-title glowing-text" sx={{fontFamily: "Open Sans, sans-serif", fontOpticalSizing: "auto", fontWeight: 600, fontVariationSettings: "wdth 100"}}>
               Contact Details
             </Typography>
             <Typography variant="body1" className="info-text">

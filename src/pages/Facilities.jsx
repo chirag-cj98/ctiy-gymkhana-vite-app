@@ -9,6 +9,7 @@ const Facilities = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('strapi url', strapiApiUrl)
     fetch(`${strapiApiUrl}/facilities?populate=*`)
       .then((response) => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -25,7 +26,7 @@ const Facilities = () => {
       id: facilityName
     }})
   }
-
+   console.log('facility',facility)
   return (
     <Box
       sx={{
