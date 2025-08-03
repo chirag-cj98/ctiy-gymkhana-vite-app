@@ -10,10 +10,7 @@ const CustomTable = () => {
                         sm: '80%', // Width for small screens
                         md: '50%', // Width for medium screens
                     },
-                    borderTop: "2px solid white",
-                    borderBottom: "2px solid white",
-                    borderLeft: "2px solid white",
-                    borderRight: "2px solid white",
+                    border: "2px solid white",
                     backgroundColor: "rgba(71, 70, 70, 0.38)",
                 }}
             >

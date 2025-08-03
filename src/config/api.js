@@ -1,10 +1,10 @@
 // src/config/api.js
 const apiConfig = {
     development: {
-      strapiApiUrl: "http://localhost:1337/api",
+      strapiApiUrl: "https://glowing-card-fd9f0cfddc.strapiapp.com/api",
     },
     production: {
-      strapiApiUrl: "https://joyful-sharing-7d3839d273.strapiapp.com/api",
+      strapiApiUrl: "https://glowing-card-fd9f0cfddc.strapiapp.com/api",
     },
   };
   

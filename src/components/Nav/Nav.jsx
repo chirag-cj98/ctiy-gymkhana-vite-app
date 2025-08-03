@@ -71,7 +71,7 @@ const Nav = () => {
             <NavLink to="/achievments" className="nav-link">Achievments</NavLink>
             <NavLink to="/gallery" className="nav-link">Gallery</NavLink>
             <NavLink
-              to="https://forms.gle/is1MBoYBqwhNHrPo7" // Replace with your Google Form URL
+              to="https://docs.google.com/forms/d/e/1FAIpQLScMGUDhw1aR9925FckHcPAE1xcwxLHf_nEZmmW4d6PHKYblhg/viewform" // Replace with your Google Form URL
               className="nav-link"
               target="_blank"
               rel="noopener noreferrer"
