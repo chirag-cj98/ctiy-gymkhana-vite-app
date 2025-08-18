@@ -3,6 +3,29 @@ import { Box, Typography, Container, Fade, Card, CardMedia, CardContent } from '
 import './About.css'; // Import the About-specific CSS file
 import Team from '../components/Team/Team';
 import { strapiApiUrl } from '../config/api';
+import { createTheme, responsiveFontSizes, ThemeProvider } from '@mui/material/styles';
+
+// let theme = createTheme();
+// theme = responsiveFontSizes(theme);
+const theme = createTheme({
+  typography: {
+    header1: {
+      // fontSize: unset;
+      fontSize: '1.6rem',
+      color: '#FFD700',
+      fontWeight: 400,
+      marginBottom: '20px',
+      lineHeight: 1.6,
+      transition: 'color 0.3s ease',
+    },
+    body1: {
+      fontWeight: 500,
+    },
+    button: {
+      fontStyle: 'italic',
+    },
+  },
+});
 
 const About = () => {
   const [about, setAbout] = useState({});
@@ -33,12 +56,14 @@ const About = () => {
       <Container maxWidth="xl">
         <Fade in={true} timeout={1500}>
           <Box className="about-content">
-            <Typography variant="h2" className="about-title glowing-text">
+          <ThemeProvider theme={theme}>
+            <Typography variant="h5" className="about-title glowing-text">
               {about.title}
             </Typography>
             <Typography variant="body1" className="about-description">
               {about.description}
             </Typography>
+            </ThemeProvider>
           </Box>
         </Fade>
 

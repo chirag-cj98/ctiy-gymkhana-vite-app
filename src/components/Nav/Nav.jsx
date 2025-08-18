@@ -143,6 +143,11 @@ const Nav = () => {
                 <NavLink to="/gallery" className="nav-link" onClick={toggleDrawer}>Gallery</NavLink>
               </ListItemText>
             </ListItem>
+            <ListItem button>
+              <ListItemText>
+                <NavLink className="nav-link" onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLScMGUDhw1aR9925FckHcPAE1xcwxLHf_nEZmmW4d6PHKYblhg/viewform', '_blank')}>Feedback</NavLink>
+              </ListItemText>
+            </ListItem>
           </List>
         </Box>
       </Drawer>
