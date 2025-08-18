@@ -49,7 +49,7 @@ const Achievements = () => {
             variant="h2"
             sx={{
               color: '#e0e0e0',
-              fontSize: '2.5rem',
+              fontSize: '1.8rem',
               marginBottom: '40px',
               fontWeight: 'bold',
               fontFamily: 'Poppins, sans-serif',

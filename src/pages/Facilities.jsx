@@ -43,7 +43,7 @@ const Facilities = () => {
         <Box
           sx={{
             backgroundColor: 'transparent', // Semi-transparent black background for better readability
-            padding: '40px',
+            padding: '10px',
             borderRadius: '12px',
             boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.2)',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
