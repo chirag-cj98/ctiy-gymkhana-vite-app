@@ -6,6 +6,7 @@ import Nav from './components/Nav/Nav';
 import Facilities from './pages/Facilities';
 import Contact from './pages/Contact';
 import Achievments from './pages/Achievments';
+import EventsPage from './pages/Event';
 import Gallery from './pages/Gallery';
 import Training from './pages/Training';
 
@@ -19,6 +20,7 @@ function App() {
         <Route path='/about' element={<About/>}/>
         <Route path='/facility' element={<Facilities/>}/>
         <Route path='/contact-us' element={<Contact/>}/>
+        <Route path='/events' element={<EventsPage/>}/>
         <Route path='/achievments' element={<Achievments/>}/>
         <Route path='/gallery' element={<Gallery/>}/>
         <Route path='/training' element={<Training/>}/>

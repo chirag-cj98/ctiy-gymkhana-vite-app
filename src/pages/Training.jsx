@@ -1,32 +1,51 @@
-import { Button, Box, Typography, Container } from '@mui/material';
+import { Button, Box, Typography, Container, CircularProgress, Card, CardContent } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import VideoPlayer from '../components/video-player';
-import appBg from '../assets/app-bg.jpg';
 import { strapiApiUrl } from '../config/api';
 
 const Training = () => {
   const location = useLocation();
   const [drills, setDrills] = useState([]);
+  const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true); // Track if more drills are available
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [title, setTitle] = useState('');
 
-  const fetchTrainingVideos = async () => {
-    const { id } = location.state; // Get the training ID from location state
-    console.log('Training ID:', id);
+  useEffect(() => {
+    const fetchTrainingVideos = async () => {
+      if (!location.state?.id) {
+        setError('No training category specified.');
+        setLoading(false);
+        setDrills([]);
+        setTitle('Training Drills');
+        return;
+      }
+      const { id } = location.state;
+      setTitle(id);
 
-    try {
-      const response = await fetch(
-        `${strapiApiUrl}/trainings?populate=*&filters[trainingTitle]=${id}&pagination[page]=${page}&pagination[pageSize]=5`
-      );
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const data = await response.json();
-      setDrills(data.data); // Set the drills data
-      setHasMore(data.data.length === 5); // Set hasMore to false if fewer than 5 drills are returned
-    } catch (err) {
-      console.error('Error fetching training videos:', err);
-    }
-  };
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await fetch(
+          `${strapiApiUrl}/trainings?populate=*&filters[trainingTitle]=${id}&pagination[page]=${page}&pagination[pageSize]=6`
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        setDrills(data.data);
+        setHasMore(data.meta.pagination.page < data.meta.pagination.pageCount);
+      } catch (err) {
+        console.error('Error fetching training videos:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrainingVideos();
+  }, [page, location.state]);
 
   // Handle Next button click
   const handleNext = () => {
@@ -35,175 +54,176 @@ const Training = () => {
 
   // Handle Previous button click
   const handlePrevious = () => {
-    setPage((prev) => (prev > 1 ? prev - 1 : prev));
+    setPage((prev) => (prev > 1 ? prev - 1 : 1));
   };
 
-  // Fetch training videos when the page changes
-  useEffect(() => {
-    fetchTrainingVideos();
-  }, [page]);
+  const handleBack = () => {
+    navigate('/facility');
+  };
+
+  const fadeInUp = {
+    'from': { opacity: 0, transform: 'translateY(30px)' },
+    'to': { opacity: 1, transform: 'translateY(0)' },
+  };
+
+  const videoCardStyle = {
+    background: 'rgba(26, 26, 26, 0.85)',
+    borderRadius: '16px',
+    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
+    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+    width: 340,
+    border: '1px solid rgba(255, 215, 0, 0.1)',
+    opacity: 0,
+    padding: '1rem',
+    '&:hover': {
+      transform: 'translateY(-10px)',
+      boxShadow: '0px 12px 28px rgba(0, 0, 0, 0.4)',
+    },
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#FFD700',
+    color: '#1a1a1a',
+    fontWeight: 'bold',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+    '&:hover': {
+      transform: 'scale(1.05)',
+      boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
+      backgroundColor: '#e6b800',
+    },
+    '&:disabled': {
+      backgroundColor: '#555',
+      color: '#888',
+      cursor: 'not-allowed',
+      transform: 'none',
+      boxShadow: 'none',
+    },
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress sx={{ color: '#FFD700' }} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Typography color="error">Error loading drills: {error}</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
       sx={{
-        background: `url(${appBg}) no-repeat center center fixed`, // Add your background image
-        backgroundSize: 'cover',
-        paddingTop: '60px',
-        paddingBottom: '60px',
-        color: 'white',
+        '@keyframes fadeInUp': fadeInUp,
+        padding: { xs: '2rem 1rem', md: '4rem 1rem' },
+        color: '#f0f0f0',
         width: '100%',
         minHeight: '100vh',
+        overflowX: 'hidden',
       }}
     >
       <Container maxWidth="xl">
-        <Box
+        <Box sx={{ mb: '2rem', textAlign: { xs: 'center', sm: 'left' } }}>
+          <Button
+            onClick={handleBack}
+            sx={buttonStyle}
+          >
+            &larr; Back to Facilities
+          </Button>
+        </Box>
+
+        <Typography
+          variant="h2"
           sx={{
-            backgroundColor: 'rgba(26, 26, 26, 0.8)',
-            padding: '40px',
-            borderRadius: '12px',
-            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.2)',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.02)',
-              boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.15)',
-            },
-            marginBottom: '40px',
+            fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
+            fontWeight: 800,
+            color: '#c70404',
+            mb: '3rem',
+            textTransform: 'uppercase',
+            letterSpacing: '2px',
+            textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
+            textAlign: 'center',
+            animation: 'fadeInUp 1s ease-out forwards',
           }}
         >
+          {title}
+        </Typography>
+
+        {drills.length === 0 ? (
           <Typography
-            variant="h2"
+            variant="h5"
             sx={{
-              color: '#e0e0e0',
-              fontSize: '2.5rem',
-              marginBottom: '20px',
-              fontWeight: 'bold',
-              fontFamily: 'Poppins, sans-serif',
               textAlign: 'center',
-              textTransform: 'uppercase',
-              letterSpacing: '2px',
+              color: 'text.secondary',
+              mt: '4rem',
+              animation: 'fadeInUp 1s ease-out forwards',
             }}
           >
-            {location.state.id}
+            No drills found for this category.
           </Typography>
-
-          {drills.length === 0 ? (
-            <Typography
-              variant="h6"
+        ) : (
+          <>
+            <Box
               sx={{
-                textAlign: 'center',
-                color: '#e0e0e0',
-                fontFamily: 'Poppins, sans-serif',
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '2.5rem',
+                justifyContent: 'center',
               }}
             >
-              No drills found.
-            </Typography>
-          ) : (
-            <>
-              <Box
-                sx={{
-                  display: 'grid',
-                  gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                  gap: '20px',
-                }}
-              >
-                {drills.map((d) => (
-                  <Box
-                    key={d.id}
-                    sx={{
-                      borderRadius: '10px',
-                      overflow: 'hidden',
-                      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                      '&:hover': {
-                        transform: 'scale(1.05)',
-                        boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.3)',
-                      },
-                      backgroundColor: 'rgba(51, 51, 51, 0.8)',
-                      padding: '16px',
-                    }}
-                  >
-                    {d.video.url && (
-                      <VideoPlayer url={`${d.video.url}`} />
-                    )}
+              {drills.map((d, index) => (
+                <Card
+                  key={d.id}
+                  sx={{
+                    ...videoCardStyle,
+                    animation: `fadeInUp 0.8s ease-out forwards`,
+                    animationDelay: `${0.3 + index * 0.1}s`,
+                  }}
+                >
+                  {d.video?.url && <VideoPlayer url={d.video.url} />}
+                  <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
                     <Typography
                       variant="h6"
                       sx={{
-                        marginTop: '10px',
-                        textAlign: 'center',
-                        color: '#e0e0e0',
-                        fontFamily: 'Poppins, sans-serif',
+                        color: '#FFD700',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
                       }}
                     >
-                      {d.drill || 'No drill name available'}
+                      {d.drill || 'Drill'}
                     </Typography>
-                  </Box>
-                ))}
-              </Box>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
 
-              {/* Pagination Buttons */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '20px',
-                  marginTop: '20px',
-                }}
-              >
-                <Button
-                  onClick={handlePrevious}
-                  disabled={page === 1} // Disable Previous button on the first page
-                  sx={{
-                    backgroundColor: '#FFD700',
-                    color: '#1a1a1a',
-                    fontWeight: 'bold',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                      boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
-                      backgroundColor: '#e6b800',
-                    },
-                    '&:disabled': {
-                      backgroundColor: '#555',
-                      color: '#888',
-                      cursor: 'not-allowed',
-                    },
-                  }}
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={handleNext}
-                  disabled={!hasMore} // Disable Next button if there are no more drills
-                  sx={{
-                    backgroundColor: '#FFD700',
-                    color: '#1a1a1a',
-                    fontWeight: 'bold',
-                    padding: '10px 20px',
-                    borderRadius: '8px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                      boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
-                      backgroundColor: '#e6b800',
-                    },
-                    '&:disabled': {
-                      backgroundColor: '#555',
-                      color: '#888',
-                      cursor: 'not-allowed',
-                    },
-                  }}
-                >
-                  Next
-                </Button>
-              </Box>
-            </>
-          )}
-        </Box>
+            {/* Pagination Buttons */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: '20px',
+                marginTop: '4rem',
+              }}
+            >
+              <Button onClick={handlePrevious} disabled={page === 1} sx={buttonStyle}>
+                Previous
+              </Button>
+              <Button onClick={handleNext} disabled={!hasMore} sx={buttonStyle}>
+                Next
+              </Button>
+            </Box>
+          </>
+        )}
       </Container>
     </Box>
   );

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
-import { Box, Typography, Container, Button } from '@mui/material';
-import appBg from '../assets/app-bg.jpg';
+import { Box, Typography, Container, Button, Fade } from '@mui/material';
 import { strapiApiUrl } from '../config/api';
+import cgcaBanner from '../assets/cgca.jpeg';
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
@@ -30,6 +30,7 @@ const Gallery = () => {
 
   // Fetch images when the page changes
   useEffect(() => {
+    setLoading(true);
     fetchImages(page);
   }, [page]);
 
@@ -44,68 +45,48 @@ const Gallery = () => {
   };
 
   return (
-    <Box
-      sx={{
-        background: `url(${appBg}) no-repeat center center fixed`,
-        backgroundSize: 'cover',
-        paddingTop: '60px',
-        paddingBottom: '60px',
-        color: 'white',
-        width: '100%',
-        minHeight: '100vh',
-      }}
-    >
-      <Container maxWidth="xl">
+    <Box>
+      
+      {/* Content Section */}
+      <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box
           sx={{
-            backgroundColor: 'rgba(26, 26, 26, 0.8)',
-            padding: '40px',
+            backgroundColor: 'rgba(0, 0, 0, 0)',
+            padding: { xs: '2rem', md: '3rem' },
             borderRadius: '12px',
-            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0px 8px 25px rgba(0, 0, 0, 0.3)',
             transition: 'transform 0.3s ease, box-shadow 0.3s ease',
             '&:hover': {
-              transform: 'scale(1.02)',
-              boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.15)',
+              transform: 'translateY(-5px)',
+              boxShadow: '0px 12px 30px rgba(0, 0, 0, 0.4)',
             },
             marginBottom: '40px',
+            color: 'white',
           }}
         >
           <Typography
             variant="h2"
             sx={{
-              color: '#e0e0e0',
-              fontSize: '2.5rem',
-              marginBottom: '20px',
+              color: '#c70404',
+              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
+              marginBottom: '30px',
               fontWeight: 'bold',
               fontFamily: 'Poppins, sans-serif',
               textAlign: 'center',
               textTransform: 'uppercase',
-              letterSpacing: '2px',
+              letterSpacing: '1.5px',
+              textShadow: '1px 1px 4px rgba(0,0,0,0.5)',
             }}
           >
             Gallery
           </Typography>
 
           {loading ? (
-            <Typography
-              variant="h6"
-              sx={{
-                textAlign: 'center',
-                color: '#e0e0e0',
-                fontFamily: 'Poppins, sans-serif',
-              }}
-            >
+            <Typography variant="h6" sx={{ textAlign: 'center', color: '#e0e0e0', fontFamily: 'Poppins, sans-serif' }}>
               Loading...
             </Typography>
           ) : images.length === 0 ? (
-            <Typography
-              variant="h6"
-              sx={{
-                textAlign: 'center',
-                color: '#e0e0e0',
-                fontFamily: 'Poppins, sans-serif',
-              }}
-            >
+            <Typography variant="h6" sx={{ textAlign: 'center', color: '#e0e0e0', fontFamily: 'Poppins, sans-serif' }}>
               No images found.
             </Typography>
           ) : (
@@ -114,13 +95,16 @@ const Gallery = () => {
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
-                  gap: '20px',
+                  gap: '2.5rem',
+                  justifyItems: 'center',
                 }}
               >
                 {images.map((image) => (
                   <Box
                     key={image.id}
                     sx={{
+                      width: '100%',
+                      maxWidth: '400px',
                       borderRadius: '10px',
                       overflow: 'hidden',
                       transition: 'transform 0.3s ease, box-shadow 0.3s ease',
@@ -151,7 +135,7 @@ const Gallery = () => {
                   display: 'flex',
                   justifyContent: 'center',
                   gap: '20px',
-                  marginTop: '20px',
+                  marginTop: '40px',
                 }}
               >
                 <Button

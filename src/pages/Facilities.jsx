@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, Container } from '@mui/material';
-import appBg from '../assets/app-bg.jpg'
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Box, Typography, Card, CardMedia, CardContent, Container, CircularProgress } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { strapiApiUrl } from '../config/api';
 
 const Facilities = () => {
   const [facility, setFacility] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('strapi url', strapiApiUrl)
-    fetch(`${strapiApiUrl}/facilities?populate=*`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${strapiApiUrl}/facilities?populate=*`);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
+        const data = await response.json();
         setFacility(data.data);
-      })
-      .catch((error) => console.error('Error fetching data:', error));
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
 
   function navigateTraining (facilityName) {
@@ -26,43 +32,85 @@ const Facilities = () => {
       id: facilityName
     }})
   }
-   console.log('facility',facility)
+
+  const fadeInUp = {
+    'from': { opacity: 0, transform: 'translateY(30px)' },
+    'to': { opacity: 1, transform: 'translateY(0)' },
+  };
+
+  const shine = {
+    'to': {
+      transform: 'translateX(200%) skewX(-25deg)',
+    }
+  };
+
+  const cardStyle = {
+    background: 'rgba(26, 26, 26, 0.85)',
+    borderRadius: '16px',
+    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
+    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
+    width: 320,
+    border: '1px solid rgba(255, 215, 0, 0.1)',
+    opacity: 0,
+    position: 'relative',
+    overflow: 'hidden',
+    cursor: 'pointer',
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '50%',
+      height: '100%',
+      background: 'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
+      transform: 'translateX(-100%) skewX(-25deg)',
+    },
+    '&:hover': {
+      transform: 'translateY(-10px)',
+      boxShadow: '0px 12px 28px rgba(0, 0, 0, 0.4)',
+      '&::before': { animation: 'shine 1.2s' },
+    },
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <CircularProgress sx={{ color: '#FFD700' }} />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+        <Typography color="error">Error loading page: {error}</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box
-      sx={{
-        background: `url(${appBg}) no-repeat center center fixed`, // Add your image path here
-        backgroundSize: 'cover', // Ensure the image covers the entire background
-        paddingTop: '60px',
-        paddingBottom: '60px',
-        color: 'white',
-        width: '100%',
-        minHeight: '100vh', // Ensure the background covers the entire viewport
-      }}
-    >
+    <Box sx={{
+      '@keyframes fadeInUp': fadeInUp,
+      '@keyframes shine': shine,
+      padding: { xs: '2rem 1rem', md: '4rem 1rem' },
+      color: '#f0f0f0',
+      width: '100%',
+      minHeight: '100vh',
+      overflowX: 'hidden',
+    }}>
       <Container maxWidth="xl">
-        <Box
-          sx={{
-            backgroundColor: 'transparent', // Semi-transparent black background for better readability
-            padding: '10px',
-            borderRadius: '12px',
-            boxShadow: '0px 12px 24px rgba(0, 0, 0, 0.2)',
-            transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.02)',
-              boxShadow: '0px 15px 30px rgba(0, 0, 0, 0.15)',
-            },
-            marginBottom: '40px',
-          }}
-        >
           <Typography
             variant="h2"
             sx={{
-              color: '#f1f1f1',
-              fontSize: '2rem',
-              marginBottom: '20px',
-              fontWeight: 'bold',
-              fontFamily: 'Poppins, sans-serif',
+              fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
+              fontWeight: 800,
+              color: '#c70404',
+              mb: '3rem',
+              textTransform: 'uppercase',
+              letterSpacing: '2px',
+              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
               textAlign: 'center',
+              animation: 'fadeInUp 1s ease-out forwards',
             }}
           >
             Our Facilities
@@ -71,45 +119,39 @@ const Facilities = () => {
             sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              gap: '20px',
+              gap: '2.5rem',
               justifyContent: 'center',
             }}
           >
-            {facility.map((fac) => (
+            {facility.map((fac, index) => (
               <Card
                 onClick={() => navigateTraining(fac.facilityName)}
                 key={fac.id}
                 sx={{
-                  backgroundColor: 'rgba(51, 51, 51, 0.8)', // Semi-transparent background for cards
-                  color: '#f1f1f1',
-                  transition: 'transform 0.3s ease',
-                  '&:hover': {
-                    transform: 'scale(1.05)',
-                  },
-                  borderRadius: '10px',
-                  boxShadow: '0px 10px 20px rgba(0, 0, 0, 0.2)',
-                  width: { xs: '100%', sm: 'calc(50% - 20px)', md: 'calc(33.33% - 20px)' },
-                  maxWidth: '400px',
+                  ...cardStyle,
+                  animation: `fadeInUp 0.8s ease-out forwards`,
+                  animationDelay: `${0.3 + index * 0.1}s`,
                 }}
               >
                 <CardMedia
                   component="img"
-                  height="200"
-                  image={`${fac.facilityImage.url}`}
+                  height="250"
+                  image={fac.facilityImage?.formats?.medium?.url || fac.facilityImage?.url}
                   alt={fac.facilityName}
                   sx={{
-                    borderTopLeftRadius: '10px',
-                    borderTopRightRadius: '10px',
+                    objectFit: 'cover',
+                    filter: 'saturate(1.1)',
+                    transition: 'filter 0.3s ease',
+                    '&:hover': { filter: 'saturate(1.3)' },
                   }}
                 />
-                <CardContent>
+                <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
                   <Typography
                     variant="h5"
                     sx={{
-                      fontFamily: 'Poppins, sans-serif',
-                      fontWeight: 'bold',
                       color: '#FFD700',
-                      textAlign: 'center',
+                      fontWeight: 700,
+                      textTransform: 'uppercase',
                     }}
                   >
                     {fac.facilityName}
@@ -118,7 +160,6 @@ const Facilities = () => {
               </Card>
             ))}
           </Box>
-        </Box>
       </Container>
     </Box>
   );

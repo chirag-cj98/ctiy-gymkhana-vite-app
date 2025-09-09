@@ -1,152 +1,92 @@
 /* General Home Styling */
 .home-container {
-    /* background: url('../assets/app-bg.jpg') no-repeat center center fixed; Path to your image in the assets folder */
-    /* background-size: cover; Ensure the image covers the entire background */
-    background-color: black;
-    padding-top: 30px;
-    padding-bottom: 40px;
-    color: white;
-    width: 100%;
-    min-height: 100vh; /* Ensure the background covers the entire viewport */
+  /* Modern light gradient background */
+  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+  padding-top: 40px;
+  padding-bottom: 40px;
+  color: #2c3e50; /* Default dark text color */
+  width: 100%;
+  min-height: calc(100vh - 90px); /* Adjust for navbar height if sticky */
+}
+
+.home-title-box {
+  text-align: center; /* Center align for a modern hero section look */
+  margin-bottom: 60px;
+  padding: 4rem 1rem; /* More vertical padding */
+  border-radius: 12px;
+  position: relative;
+  animation: fadeIn 1s ease-out;
+  /* Remove old background and shadow */
+  background: transparent;
+  box-shadow: none;
+}
+
+.home-title {
+  font-size: 3rem;
+  color: #c70404; /* Use brand's primary red */
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+}
+
+.home-description {
+  font-size: 1.2rem;
+  color: #2c3e50; /* Dark slate color for readability */
+  font-weight: 500; /* Slightly bolder */
+  margin-bottom: 30px;
+  line-height: 1.6;
+  max-width: 700px; /* Constrain line width for readability */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Smooth fade-in animation, slightly adjusted */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .home-title-box {
-    text-align: right;
-    margin-bottom: 40px;
-    /* background: rgba(26, 26, 26, 0.8); Semi-transparent black background for better readability */
-    /* background: radial-gradient(circle, rgb(248, 228, 113) 0%, #ffa808 150%); */
-    background-image: url('../assets/cgca.png'), radial-gradient(circle, rgb(248, 228, 113) 0%, #ffa808 150%);
-    background-repeat: no-repeat, no-repeat;
-    background-position: left , center;
-    background-size: 25%, 100%;
-    /* background: 
-        radial-gradient(circle, 
-            rgba(255, 0, 0, 0) 0%, 
-            rgba(255, 0, 0, 0) 20%, 
-            gold 21%, 
-            gold 22%, 
-            rgba(255, 0, 0, 0) 23%,
-            rgba(255, 0, 0, 0) 40%, 
-            lightblue 41%,
-            lightblue 42%,
-            rgba(255, 0, 0, 0) 43%,
-            rgba(255, 0, 0, 0) 60%,
-            lightgreen 61%,
-            lightgreen 62%,
-            rgba(255, 0, 0, 0) 63%,
-            rgba(255, 0, 0, 0) 80%,
-            purple 81%,
-            purple 82%,
-            rgba(255, 0, 0, 0) 83%,
-            rgba(255, 0, 0, 0) 100%
-        ); */
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
-    position: relative;
-    animation: fadeIn 1s ease-out;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
+}
+
+/* Section Styling for light theme */
+section {
+  margin-top: 40px;
+  background-color: #ffffff; /* Clean white cards for sections */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2); /* Softer, modern shadow */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-5px); /* Subtle lift on hover */
+  box-shadow: 0 12px 28px rgba(149, 157, 165, 0.25);
+}
+
+section h2 {
+  color: #2c3e50; /* Dark slate for section headers */
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+section p {
+  color: #555; /* Dark gray for paragraph text */
+  font-size: 1.1rem;
+  line-height: 1.7;
+}
+
+/* Responsive adjustments */
+@media (min-width: 1200px) {
   .home-title {
-    font-size: 3rem;
-    color: #ff2d2d;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    /* animation: glow 3s infinite ease-in-out;  */
-    /* Smoother and longer glow */
+    font-size: 4rem;
   }
 
-  
-  
   .home-description {
-    font-size: 1.2rem;
-    color: #111;
-    font-weight: 400;
-    margin-bottom: 30px;
-    line-height: 1.6;
-    transition: color 0.3s ease;
-    /* animation: expand 3s infinite ease-in-out;  */
+    font-size: 1.4rem;
   }
-  
-  /* .home-description:hover {
-    color: #b32929; Hover effect
-  } */
-  
-
-  @keyframes expand {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.2);
-    }
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  /* Smoother Glowing Text Animation */
-  @keyframes glow {
-    0% {
-      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.5);
-    }
-    50% {
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.8), 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.8);
-    }
-    100% {
-      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.5);
-    }
-  }
-  
-  /* Smooth fade-in animation */
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  
-  /* Adding an elegant hover effect on the sections */
-  section {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  section:hover {
-    transform: scale(1.02);
-    box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Extra large screen styling */
-  @media (min-width: 1200px) {
-    .home-title {
-      font-size: 4rem;
-    }
-  
-    .home-description {
-      font-size: 1.4rem;
-    }
-  }
-  
-  /* Section Styling */
-  section {
-    margin-top: 40px;
-    background-color: rgba(51, 51, 51, 0.8); /* Semi-transparent background for sections */
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  section h2 {
-    color: #f1f1f1;
-    font-size: 2rem;
-    margin-bottom: 20px;
-  }
-  
-  section p {
-    color: #b0b0b0;
-    font-size: 1.1rem;
-    line-height: 1.7;
-  }
+}
