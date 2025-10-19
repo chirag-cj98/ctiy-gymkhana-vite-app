@@ -81,7 +81,7 @@ const Nav = () => {
                 sm: '2rem', // Font size for small screens
               }, 
               fontWeight: '700',
-              fontFamily: 'Charm, cursive',
+              fontFamily: 'Rubik Distressed, system-ui',
               background: 'linear-gradient(45deg, #ffdd00 20%, #c70404 90%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
