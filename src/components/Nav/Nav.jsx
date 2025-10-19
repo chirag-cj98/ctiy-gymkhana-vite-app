@@ -3,7 +3,7 @@ import { AppBar, Container, Box, Toolbar, Typography, IconButton, Drawer, List, 
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import InstagramIcon from '@mui/icons-material/Instagram'; 
-import logo from '../../assets/cgca.jpeg'
+import logo from '../../assets/cgca.jpg'
 
 const Nav = () => {
   const [open, setOpen] = useState(false);
@@ -82,7 +82,7 @@ const Nav = () => {
               }, 
               fontWeight: '700',
               fontFamily: 'Charm, cursive',
-              background: 'linear-gradient(45deg, #c70404 30%, #ffdd00 90%)',
+              background: 'linear-gradient(45deg, #ffdd00 20%, #c70404 90%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',

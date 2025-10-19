@@ -1,7 +1,7 @@
 import { Box, Container, Grid, Typography, Link, IconButton, Divider } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { NavLink as RouterNavLink } from 'react-router-dom';
-import logo from '../../assets/cgca.jpeg';
+import logo from '../../assets/cgca.jpg';
 
 const Footer = () => {
   const navLinks = [
@@ -55,10 +55,10 @@ const Footer = () => {
               </Typography>
             </Box>
             <Typography variant="body2" sx={{ mb: 1, fontFamily: 'Poppins, sans-serif' }}>
-              Address: Jnanakshi Vidyaniketan School, RR Nagar, Bangalore, India
+              Address: CITY GYMKHANA, Kenchena Halli Road, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098
             </Typography>
             <Typography variant="body2" sx={{ mb: 1, fontFamily: 'Poppins, sans-serif' }}>
-              Phone: +91 9901029957
+              Phone: +91 9901029957, +91 9972278833
             </Typography>
             <Typography variant="body2" sx={{ fontFamily: 'Poppins, sans-serif' }}>
               Email: Gymkhanacity@gmail.com

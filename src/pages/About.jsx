@@ -158,6 +158,7 @@ const About = () => {
               fontWeight: 400,
               lineHeight: 1.7,
               maxWidth: '80ch',
+              whiteSpace: 'pre-wrap',
             }}
           >
             {about?.description}
