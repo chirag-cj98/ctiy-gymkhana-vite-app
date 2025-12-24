@@ -1,4 +1,4 @@
-import { Button, Box, Typography, Container, CircularProgress, Card, CardContent } from '@mui/material';
+import { Button, Box, Typography, Container, CircularProgress, Card, CardContent, Fade } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import VideoPlayer from '../components/video-player';
@@ -47,178 +47,150 @@ const Training = () => {
     fetchTrainingVideos();
   }, [page, location.state]);
 
-  // Handle Next button click
-  const handleNext = () => {
-    setPage((prev) => prev + 1);
-  };
-
-  // Handle Previous button click
-  const handlePrevious = () => {
-    setPage((prev) => (prev > 1 ? prev - 1 : 1));
-  };
-
-  const handleBack = () => {
-    navigate('/facility');
-  };
-
-  const fadeInUp = {
-    'from': { opacity: 0, transform: 'translateY(30px)' },
-    'to': { opacity: 1, transform: 'translateY(0)' },
-  };
-
-  const videoCardStyle = {
-    background: 'rgba(26, 26, 26, 0.85)',
-    borderRadius: '16px',
-    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
-    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-    width: 340,
-    border: '1px solid rgba(255, 215, 0, 0.1)',
-    opacity: 0,
-    padding: '1rem',
-    '&:hover': {
-      transform: 'translateY(-10px)',
-      boxShadow: '0px 12px 28px rgba(0, 0, 0, 0.4)',
-    },
-  };
-
-  const buttonStyle = {
-    backgroundColor: '#FFD700',
-    color: '#1a1a1a',
-    fontWeight: 'bold',
-    padding: '12px 24px',
-    borderRadius: '8px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-    '&:hover': {
-      transform: 'scale(1.05)',
-      boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
-      backgroundColor: '#e6b800',
-    },
-    '&:disabled': {
-      backgroundColor: '#555',
-      color: '#888',
-      cursor: 'not-allowed',
-      transform: 'none',
-      boxShadow: 'none',
-    },
-  };
+  const handleNext = () => setPage((prev) => prev + 1);
+  const handlePrevious = () => setPage((prev) => (prev > 1 ? prev - 1 : 1));
+  const handleBack = () => navigate('/facility');
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <CircularProgress sx={{ color: '#FFD700' }} />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <CircularProgress sx={{ color: 'var(--accent)' }} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
         <Typography color="error">Error loading drills: {error}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box
-      sx={{
-        '@keyframes fadeInUp': fadeInUp,
-        padding: { xs: '2rem 1rem', md: '4rem 1rem' },
-        color: '#f0f0f0',
-        width: '100%',
-        minHeight: '100vh',
-        overflowX: 'hidden',
-      }}
-    >
+    <Box sx={{ bgcolor: 'var(--neutral-100)', pt: '100px', pb: 8, minHeight: '100vh' }}>
       <Container maxWidth="xl">
-        <Box sx={{ mb: '2rem', textAlign: { xs: 'center', sm: 'left' } }}>
+        <Box sx={{ mb: 6, textAlign: { xs: 'center', sm: 'left' } }}>
           <Button
             onClick={handleBack}
-            sx={buttonStyle}
+            variant="text"
+            sx={{
+              color: 'var(--primary)',
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '1rem',
+              '&:hover': { bgcolor: 'transparent', textDecoration: 'underline' }
+            }}
           >
             &larr; Back to Facilities
           </Button>
         </Box>
 
-        <Typography
-          variant="h2"
-          sx={{
-            fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
-            fontWeight: 800,
-            color: '#c70404',
-            mb: '3rem',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-            textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
-            textAlign: 'center',
-            animation: 'fadeInUp 1s ease-out forwards',
-          }}
-        >
-          {title}
-        </Typography>
+        <Fade in={true} timeout={1000}>
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
+            <Typography
+              variant="h2"
+              sx={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: { xs: '2.5rem', sm: '3rem', md: '4rem' },
+                fontWeight: 800,
+                color: 'var(--primary)',
+                mb: 2,
+                textTransform: 'uppercase',
+                letterSpacing: '-1px',
+              }}
+            >
+              {title} <span className="gradient-text">Drills</span>
+            </Typography>
+          </Box>
+        </Fade>
 
         {drills.length === 0 ? (
-          <Typography
-            variant="h5"
-            sx={{
-              textAlign: 'center',
-              color: 'text.secondary',
-              mt: '4rem',
-              animation: 'fadeInUp 1s ease-out forwards',
-            }}
-          >
-            No drills found for this category.
-          </Typography>
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+              No drills found for this category.
+            </Typography>
+          </Box>
         ) : (
           <>
             <Box
               sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '2.5rem',
-                justifyContent: 'center',
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                gap: 4,
               }}
             >
               {drills.map((d, index) => (
-                <Card
-                  key={d.id}
-                  sx={{
-                    ...videoCardStyle,
-                    animation: `fadeInUp 0.8s ease-out forwards`,
-                    animationDelay: `${0.3 + index * 0.1}s`,
-                  }}
-                >
-                  {d.video?.url && <VideoPlayer url={d.video.url} />}
-                  <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        color: '#FFD700',
-                        fontWeight: 700,
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {d.drill || 'Drill'}
-                    </Typography>
-                  </CardContent>
-                </Card>
+                <Fade in={true} timeout={1000 + index * 200} key={d.id}>
+                  <Card
+                    className="card-hover"
+                    sx={{
+                      borderRadius: '24px',
+                      overflow: 'hidden',
+                      border: 'none',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                      bgcolor: 'white',
+                    }}
+                  >
+                    <Box sx={{ p: 2 }}>
+                      {d.video?.url && <VideoPlayer url={d.video.url} />}
+                    </Box>
+                    <CardContent sx={{ p: 3, pt: 1, textAlign: 'center' }}>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          color: 'var(--primary)',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          fontFamily: 'var(--font-heading)'
+                        }}
+                      >
+                        {d.drill || 'Drill'}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Fade>
               ))}
             </Box>
 
-            {/* Pagination Buttons */}
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                gap: '20px',
-                marginTop: '4rem',
-              }}
-            >
-              <Button onClick={handlePrevious} disabled={page === 1} sx={buttonStyle}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 8 }}>
+              <Button
+                onClick={handlePrevious}
+                disabled={page === 1}
+                variant="outlined"
+                sx={{
+                  borderRadius: '50px',
+                  px: 4,
+                  py: 1.5,
+                  borderColor: 'var(--primary)',
+                  color: 'var(--primary)',
+                  fontWeight: 600,
+                  '&:hover': {
+                    bgcolor: 'var(--primary)',
+                    color: 'white',
+                    borderColor: 'var(--primary)',
+                  }
+                }}
+              >
                 Previous
               </Button>
-              <Button onClick={handleNext} disabled={!hasMore} sx={buttonStyle}>
+              <Button
+                onClick={handleNext}
+                disabled={!hasMore}
+                variant="contained"
+                sx={{
+                  bgcolor: 'var(--accent)',
+                  color: 'black',
+                  borderRadius: '50px',
+                  px: 4,
+                  py: 1.5,
+                  fontWeight: 700,
+                  fontFamily: 'var(--font-heading)',
+                  '&:hover': {
+                    bgcolor: '#fbbf24',
+                  }
+                }}
+              >
                 Next
               </Button>
             </Box>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, Container, CircularProgress } from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent, Container, CircularProgress, Fade } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { strapiApiUrl } from '../config/api';
 
@@ -27,139 +27,151 @@ const Facilities = () => {
     fetchData();
   }, []);
 
-  function navigateTraining (facilityName) {
-    navigate('/training', { state: {
-      id: facilityName
-    }})
+  function navigateTraining(facilityName) {
+    navigate('/training', {
+      state: {
+        id: facilityName
+      }
+    })
   }
-
-  const fadeInUp = {
-    'from': { opacity: 0, transform: 'translateY(30px)' },
-    'to': { opacity: 1, transform: 'translateY(0)' },
-  };
-
-  const shine = {
-    'to': {
-      transform: 'translateX(200%) skewX(-25deg)',
-    }
-  };
-
-  const cardStyle = {
-    background: 'rgba(26, 26, 26, 0.85)',
-    borderRadius: '16px',
-    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
-    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-    width: 320,
-    border: '1px solid rgba(255, 215, 0, 0.1)',
-    opacity: 0,
-    position: 'relative',
-    overflow: 'hidden',
-    cursor: 'pointer',
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '50%',
-      height: '100%',
-      background: 'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
-      transform: 'translateX(-100%) skewX(-25deg)',
-    },
-    '&:hover': {
-      transform: 'translateY(-10px)',
-      boxShadow: '0px 12px 28px rgba(0, 0, 0, 0.4)',
-      '&::before': { animation: 'shine 1.2s' },
-    },
-  };
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <CircularProgress sx={{ color: '#FFD700' }} />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <CircularProgress sx={{ color: 'var(--accent)' }} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography color="error">Error loading page: {error}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <Typography color="error" variant="h6">Error loading page: {error}</Typography>
       </Box>
     );
   }
 
   return (
     <Box sx={{
-      '@keyframes fadeInUp': fadeInUp,
-      '@keyframes shine': shine,
-      padding: { xs: '2rem 1rem', md: '4rem 1rem' },
-      color: '#f0f0f0',
-      width: '100%',
+      bgcolor: 'var(--neutral-100)',
       minHeight: '100vh',
-      overflowX: 'hidden',
+      pt: '100px',
+      pb: 8
     }}>
       <Container maxWidth="xl">
-          <Typography
-            variant="h2"
-            sx={{
-              fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
-              fontWeight: 800,
-              color: '#c70404',
-              mb: '3rem',
-              textTransform: 'uppercase',
-              letterSpacing: '2px',
-              textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
-              textAlign: 'center',
-              animation: 'fadeInUp 1s ease-out forwards',
-            }}
-          >
-            Our Facilities
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '2.5rem',
-              justifyContent: 'center',
-            }}
-          >
-            {facility.map((fac, index) => (
+        <Fade in={true} timeout={1000}>
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
+            <Typography
+              variant="h2"
+              sx={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: { xs: '2.5rem', md: '4rem' },
+                fontWeight: 800,
+                color: 'var(--primary)',
+                mb: 2,
+                textTransform: 'uppercase',
+                letterSpacing: '-1px',
+              }}
+            >
+              World-Class <span className="gradient-text">Facilities</span>
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: 'var(--font-body)',
+                color: 'text.secondary',
+                maxWidth: '600px',
+                mx: 'auto'
+              }}
+            >
+              Train like a pro with our state-of-the-art infrastructure.
+            </Typography>
+          </Box>
+        </Fade>
+
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+            gap: 4,
+          }}
+        >
+          {facility.map((fac, index) => (
+            <Fade in={true} timeout={1000 + index * 200} key={fac.id}>
               <Card
+                className="card-hover"
                 onClick={() => navigateTraining(fac.facilityName)}
-                key={fac.id}
                 sx={{
-                  ...cardStyle,
-                  animation: `fadeInUp 0.8s ease-out forwards`,
-                  animationDelay: `${0.3 + index * 0.1}s`,
+                  borderRadius: '24px',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  border: 'none',
+                  boxShadow: '0 20px 40px -10px rgba(0,0,0,0.08)',
+                  bgcolor: 'white',
+                  position: 'relative'
                 }}
               >
-                <CardMedia
-                  component="img"
-                  height="250"
-                  image={fac.facilityImage?.formats?.medium?.url || fac.facilityImage?.url}
-                  alt={fac.facilityName}
-                  sx={{
-                    objectFit: 'cover',
-                    filter: 'saturate(1.1)',
-                    transition: 'filter 0.3s ease',
-                    '&:hover': { filter: 'saturate(1.3)' },
-                  }}
-                />
-                <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
-                  <Typography
-                    variant="h5"
+                <Box sx={{ position: 'relative', height: '300px', overflow: 'hidden' }}>
+                  <CardMedia
+                    component="img"
+                    height="100%"
+                    image={fac.facilityImage?.formats?.medium?.url || fac.facilityImage?.url}
+                    alt={fac.facilityName}
                     sx={{
-                      color: '#FFD700',
-                      fontWeight: 700,
-                      textTransform: 'uppercase',
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      transition: 'transform 0.6s ease',
+                      '.card-hover:hover &': {
+                        transform: 'scale(1.1)',
+                      }
                     }}
-                  >
-                    {fac.facilityName}
+                  />
+                  <Box sx={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    background: 'linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 60%)',
+                    opacity: 0.8
+                  }} />
+                  <Box sx={{ position: 'absolute', bottom: 20, left: 20, right: 20 }}>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        color: 'white',
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        textShadow: '0 4px 10px rgba(0,0,0,0.3)'
+                      }}
+                    >
+                      {fac.facilityName}
+                    </Typography>
+                  </Box>
+                </Box>
+                <CardContent sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Typography variant="body1" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                    View Training Details
                   </Typography>
+                  <Box sx={{
+                    bgcolor: 'var(--neutral-100)',
+                    p: 1,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="var(--primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Box>
                 </CardContent>
               </Card>
-            ))}
-          </Box>
+            </Fade>
+          ))}
+        </Box>
       </Container>
     </Box>
   );

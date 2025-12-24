@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Container, CircularProgress } from '@mui/material';
+import { Box, Typography, Container, CircularProgress, Fade, Card, CardMedia, CardContent } from '@mui/material';
 import { strapiApiUrl } from '../config/api';
 
 const Achievements = () => {
   const [achievements, setAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const shine = {
-    to: {
-      transform: 'translateX(200%) skewX(-25deg)',
-    },
-  };
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -36,130 +30,119 @@ const Achievements = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <CircularProgress sx={{ color: '#c70404' }} />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <CircularProgress sx={{ color: 'var(--accent)' }} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
         <Typography color="error">Error loading achievements: {error}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box
-       sx={{
-        '@keyframes shine': shine,
-        paddingTop: '60px',
-        paddingBottom: '60px',
-        color: 'white',
-        width: '100%',
-        minHeight: '100vh', // Ensure the background covers the entire viewport
-      }}
-    >
+    <Box sx={{ bgcolor: 'var(--neutral-100)', pt: '100px', pb: 8, minHeight: '100vh' }}>
       <Container maxWidth="xl">
-        <Box
-          sx={{
-            padding: { xs: '2rem', md: '3rem' }, // Responsive padding
-            marginBottom: '40px',
-          }}
-        >
-          <Typography
-            variant="h2"
-            sx={{
-              color: '#c70404', // Match homepage red
-              fontSize: { xs: '1.8rem', sm: '2.2rem', md: '2.5rem' },
-              marginBottom: '40px',
-              fontWeight: 'bold',
-              fontFamily: 'Poppins, sans-serif',
-              textAlign: 'center',
-              textTransform: 'uppercase',
-              letterSpacing: '1.5px',
-              textShadow: '1px 1px 4px rgba(0,0,0,0.5)',
-            }}
-          >
-            Our Achievements
-          </Typography>
-
-          {achievements.length === 0 ? (
-            <Typography variant="h6" sx={{ textAlign: 'center', color: '#e0e0e0' }}>
-              No achievements to display at the moment.
-            </Typography>
-          ) : (
-            <Box
+        <Fade in={true} timeout={1000}>
+          <Box sx={{ textAlign: 'center', mb: 8 }}>
+            <Typography
+              variant="h2"
               sx={{
-                display: 'grid',
-                gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
-                gap: '2.5rem',
-                justifyItems: 'center',
+                fontFamily: 'var(--font-heading)',
+                fontSize: { xs: '2.5rem', sm: '3rem', md: '4rem' },
+                fontWeight: 800,
+                color: 'var(--primary)',
+                mb: 2,
+                textTransform: 'uppercase',
+                letterSpacing: '-1px',
               }}
             >
-              {achievements.map((a) => (
-                <Box
-                  key={a.id}
+              Our <span className="gradient-text">Achievements</span>
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                fontFamily: 'var(--font-body)',
+                color: 'text.secondary',
+                maxWidth: '700px',
+                mx: 'auto'
+              }}
+            >
+              Celebrating the victories and milestones that define our journey.
+            </Typography>
+          </Box>
+        </Fade>
+
+        {achievements.length === 0 ? (
+          <Box sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+              No achievements to display at the moment.
+            </Typography>
+          </Box>
+        ) : (
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+              gap: 4,
+            }}
+          >
+            {achievements.map((a, index) => (
+              <Fade in={true} timeout={1000 + index * 200} key={a.id}>
+                <Card
+                  className="card-hover"
                   sx={{
-                    backgroundColor: 'rgba(51, 51, 51, 0.8)', // Semi-transparent background for each achievement
-                    padding: '20px',
-                    borderRadius: '10px',
-                    boxShadow: '0px 8px 15px rgba(0, 0, 0, 0.2)',
-                    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-                    position: 'relative',
+                    borderRadius: '24px',
                     overflow: 'hidden',
-                    '&::before': {
-                      content: '""',
+                    bgcolor: 'white',
+                    border: 'none',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                  }}
+                >
+                  <Box sx={{ height: '300px', overflow: 'hidden', position: 'relative' }}>
+                    <CardMedia
+                      component="img"
+                      image={a.achievementImg?.url}
+                      alt={a.description}
+                      sx={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        transition: 'transform 0.6s ease',
+                        '.card-hover:hover &': {
+                          transform: 'scale(1.1)',
+                        }
+                      }}
+                    />
+                    <Box sx={{
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: '50%',
-                      height: '100%',
-                      background: 'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
-                      transform: 'translateX(-100%) skewX(-25deg)',
-                    },
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                      boxShadow: '0px 15px 30px rgba(199, 4, 4, 0.3)',
-                      '&::before': { animation: 'shine 1.2s' },
-                    },
-                    width: '100%',
-                    maxWidth: '500px', // Max width for each card
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={`${a.achievementImg.url}`}
-                    alt={a.description}
-                    sx={{
-                      width: '100%',
-                      height: 'auto',
-                      borderRadius: '10px',
-                      marginBottom: '20px',
-                      objectFit: 'cover',
-                    }}
-                  />
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontFamily: 'Poppins, sans-serif',
-                      fontWeight: '400',
-                      color: '#e0e0e0', // Brighter text
-                      lineHeight: '1.6',
-                      textAlign: 'center',
-                    }}
-                  >
-                    {a.description}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          )}
-        </Box>
+                      right: 0,
+                      bottom: 0,
+                      background: 'linear-gradient(to top, rgba(15, 23, 42, 0.9) 0%, transparent 60%)',
+                    }} />
+                    <Box sx={{ position: 'absolute', bottom: 20, left: 20, right: 20 }}>
+                      <Typography variant="body1" sx={{
+                        color: 'white',
+                        fontFamily: 'var(--font-body)',
+                        fontSize: '1.1rem',
+                        fontWeight: 500,
+                        lineHeight: 1.6
+                      }}>
+                        {a.description}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Card>
+              </Fade>
+            ))}
+          </Box>
+        )}
       </Container>
     </Box>
   );

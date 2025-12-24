@@ -1,196 +1,356 @@
-import React, { useState } from 'react';
-import { AppBar, Container, Box, Toolbar, Typography, IconButton, Drawer, List, ListItem, Avatar, Link } from '@mui/material';
-import { NavLink as RouterNavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { AppBar, Container, Box, Toolbar, Typography, IconButton, Drawer, List, ListItem, Avatar, Link, Menu, MenuItem, useScrollTrigger } from '@mui/material';
+import { NavLink as RouterNavLink, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
-import InstagramIcon from '@mui/icons-material/Instagram'; 
-import logo from '../../assets/cgca.jpg'
+import InstagramIcon from '@mui/icons-material/Instagram';
+import logo from '../../assets/cgca.jpg';
+import { strapiApiUrl } from '../../config/api';
+import './Nav.css';
 
 const Nav = () => {
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [detailsData, setDetailsData] = useState({
+    scheduleLink: '/schedule',
+    feedbackLink: 'https://docs.google.com/forms/u/0/'
+  });
 
-  // MUI-compatible sx prop for desktop navigation links
-  const desktopLinkStyles = {
-    color: 'white',
-    fontSize: '1.25rem', // equiv. to text-xl
-    fontWeight: 'bold',
-    fontFamily: 'Poppins, sans-serif',
-    textDecoration: 'none',
-    display: 'inline-block',
-    transition: 'all 0.3s ease-in-out',
-    '&:hover': {
-      color: '#ffdd00',
-      transform: 'scale(1.1)',
-    },
-    // Style for the active NavLink
-    '&.active': {
-      color: '#ffdd00',
-    },
-  };
+  // Fetch dynamic links
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const response = await fetch(`${strapiApiUrl}/other-detail?populate=*`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            setDetailsData({
+              scheduleLink: data.data.scheduleLink || '/schedule',
+              feedbackLink: data.data.feedbackLink || 'https://docs.google.com/forms/u/0/'
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch other details:", error);
+      }
+    };
+    fetchDetails();
+  }, []);
 
-  // MUI-compatible sx prop for mobile drawer links
-  const drawerLinkStyles = {
-    display: 'block',
-    width: '100%',
-    padding: '12px 16px',
-    color: 'rgb(31 41 55)', // text-gray-800
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    fontFamily: 'Poppins, sans-serif',
-    fontSize: '1.125rem', // text-lg
-    '&:hover': {
-      color: '#2563eb', // text-blue-600
-      backgroundColor: 'rgba(0, 0, 0, 0.04)',
-    },
-    '&.active': {
-      color: '#2563eb', // text-blue-600
-      backgroundColor: 'rgba(0, 0, 0, 0.08)',
-    },
-  };
+  // Handling scroll for navbar transparency effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-  // Toggle Drawer open/close
   const toggleDrawer = () => {
     setOpen(!open);
   };
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openMenu = Boolean(anchorEl);
+  const timeoutRef = React.useRef(null);
+
+  const handleMenuOpen = (event) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    timeoutRef.current = setTimeout(() => {
+      setAnchorEl(null);
+    }, 200);
+  };
+
+  const handleMenuEnter = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
+  const navLinks = [
+    { title: 'Home', path: '/' },
+    { title: 'About', path: '/about' },
+    { title: 'Facility', path: '/facility' },
+    { title: 'Events', path: '/events' },
+    { title: 'Achievements', path: '/achievments' },
+    { title: 'Gallery', path: '/gallery' },
+    { title: 'Supporters', path: '/supporters' },
+    { title: 'KSCA history', path: '/ksca-history' },
+  ];
+
+  const detailsLinks = [
+    { title: 'Schedule', path: detailsData.scheduleLink, isExternal: true },
+    { title: 'Contact', path: '/contact-us' },
+    { title: 'Feedback', path: detailsData.feedbackLink, isExternal: true },
+  ];
+
   return (
-    <AppBar 
-      position="sticky" 
-      // Apply modern UI styles: semi-transparent background, backdrop blur, and a bottom border
-      className="w-full transition-colors duration-300 ease-in-out"
+    <AppBar
+      position="fixed"
+      className={`transition-all duration-300 ${scrolled ? 'glass-dark py-2' : 'bg-transparent py-4'}`}
       sx={{
-        background: 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(200, 200, 200, 0.5)',
-        color: '#2c3e50', // Set default text/icon color for the AppBar
+        boxShadow: scrolled ? '0 4px 30px rgba(0, 0, 0, 0.1)' : 'none',
+        borderBottom: scrolled ? '1px solid rgba(255,255,255,0.1)' : 'none',
+        background: scrolled ? 'rgba(15, 23, 42, 0.95)' : 'rgba(15, 23, 42, 0.95)', // Always dark for contrast or transparent if we want over banner
+        backdropFilter: 'blur(12px)',
+        color: 'white',
       }}
     >
       <Container maxWidth="xl">
-        <Toolbar className="flex items-center justify-between px-8 py-4">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            {/* Logo */}
+        <Toolbar className="flex items-center justify-between">
+          {/* Logo & Title Section */}
+          <Box
+            component={RouterNavLink}
+            to="/"
+            sx={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none' }}
+          >
             <Avatar
-              src={logo} // Use your logo here
+              src={logo}
               alt="City Gymkhana Logo"
-              className="h-[50px] w-[50px] rounded-full border-2 border-[#FFD700]"
+              sx={{
+                width: { xs: 45, md: 55 },
+                height: { xs: 45, md: 55 },
+                border: '2px solid var(--accent)',
+                transition: 'transform 0.3s ease',
+                '&:hover': { transform: 'rotate(10deg)' }
+              }}
             />
 
-            {/* Title */}
-            <Typography variant="h4" sx={{
-              fontSize: {
-                xs: '1.2rem', // Font size for mobile
-                sm: '2rem', // Font size for small screens
-              }, 
-              fontWeight: '700',
-              fontFamily: 'Rubik Distressed, system-ui',
-              background: 'linear-gradient(45deg, #ffdd00 20%, #c70404 90%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-                City Gymkhana
-            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h5" sx={{
+                fontFamily: 'var(--font-heading)',
+                fontWeight: 800,
+                letterSpacing: '1px',
+                lineHeight: 1,
+                color: 'white',
+                textTransform: 'uppercase',
+                fontSize: { xs: '1.2rem', md: '1.5rem' }
+              }}>
+                City <span style={{ color: 'var(--accent)' }}>Gymkhana</span>
+              </Typography>
+            </Box>
           </Box>
 
-          {/* Right side of Navbar */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              {/* NavLinks for Desktop */}
-            <Box
-              sx={{
-                display: { xs: 'none', sm: 'flex' },
-                alignItems: 'center',
-                gap: '2rem',
-                backgroundColor: '#c70404',
-                padding: '0.75rem 1.5rem', // Equivalent to py-3 px-6
-                borderRadius: '2rem',
-                border: '3px solid #ffdd00',
-              }}
-            >
-              <Link component={RouterNavLink} to="/" sx={desktopLinkStyles}>Home</Link>
-              <Link component={RouterNavLink} to="/about" sx={desktopLinkStyles}>About</Link>
-              <Link component={RouterNavLink} to="/facility" sx={desktopLinkStyles}>Facility</Link>
-              <Link component={RouterNavLink} to="/contact-us" sx={desktopLinkStyles}>Contact</Link>
-              <Link component={RouterNavLink} to="/events" sx={desktopLinkStyles}>Events</Link>
-              <Link component={RouterNavLink} to="/achievments" sx={desktopLinkStyles}>Achievements</Link>
-              <Link component={RouterNavLink} to="/gallery" sx={desktopLinkStyles}>Gallery</Link>
-              <Link
-                href="https://docs.google.com/forms/d/e/1FAIpQLScMGUDhw1aR9925FckHcPAE1xcwxLHf_nEZmmW4d6PHKYblhg/viewform" // Replace with your Google Form URL
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={desktopLinkStyles}
-              >
-              Feedback 
-              </Link>
-            </Box>
+          {/* Desktop Navigation */}
+          <Box sx={{ display: { xs: 'none', lg: 'flex' }, alignItems: 'center', gap: '2rem' }}>
+            <Box sx={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+              {navLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  component={RouterNavLink}
+                  to={link.path}
+                  underline="none"
+                  sx={{
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: '0.95rem',
+                    fontWeight: 500,
+                    color: location.pathname === link.path ? 'var(--accent)' : 'rgba(255,255,255,0.8)',
+                    transition: 'all 0.3s ease',
+                    position: 'relative',
+                    '&:hover': {
+                      color: 'var(--accent)',
+                      transform: 'translateY(-2px)'
+                    },
+                    '&::after': location.pathname === link.path ? {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -4,
+                      left: 0,
+                      width: '100%',
+                      height: '2px',
+                      background: 'var(--accent)',
+                      borderRadius: '2px'
+                    } : {}
+                  }}
+                >
+                  {link.title}
+                </Link>
+              ))}
 
-            {/* Instagram Icon */}
-            <Box>
-              <IconButton
-                color="inherit"
-                onClick={() => window.open('https://www.instagram.com/city.gymkhana', '_blank')}
+              <Box
+                component="span"
+                onMouseEnter={handleMenuOpen}
+                onMouseLeave={handleMenuClose}
                 sx={{
-                  transition: 'transform 0.3s ease-in-out',
-                  '&:hover': {
-                    transform: 'scale(1.1)',
-                  },
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '0.95rem',
+                  fontWeight: 500,
+                  color: 'rgba(255,255,255,0.8)',
+                  transition: 'color 0.3s ease',
+                  '&:hover': { color: 'var(--accent)' }
+                }}
+                aria-controls={openMenu ? 'details-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={openMenu ? 'true' : undefined}
+              >
+                Details
+              </Box>
+              <Menu
+                id="details-menu"
+                anchorEl={anchorEl}
+                open={openMenu}
+                onClose={handleMenuClose}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                  onMouseEnter: handleMenuEnter,
+                  onMouseLeave: handleMenuClose,
+                }}
+                sx={{
+                  pointerEvents: 'none',
+                  '& .MuiPaper-root': {
+                    pointerEvents: 'auto',
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    color: 'white',
+                    mt: 1,
+                    minWidth: 150,
+                    borderRadius: '12px',
+                    boxShadow: '0 10px 40px -10px rgba(0,0,0,0.5)'
+                  }
                 }}
               >
-                <InstagramIcon />
-              </IconButton>
+                {detailsLinks.map((link) => (
+                  <MenuItem
+                    key={link.title}
+                    onClick={handleMenuClose}
+                    sx={{
+                      fontSize: '0.9rem',
+                      fontFamily: 'var(--font-body)',
+                      '&:hover': {
+                        backgroundColor: 'rgba(251, 191, 36, 0.1)',
+                        color: 'var(--accent)'
+                      }
+                    }}
+                  >
+                    {link.isExternal ? (
+                      <Link
+                        href={link.path}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        color="inherit"
+                        underline="none"
+                        sx={{ width: '100%' }}
+                      >
+                        {link.title}
+                      </Link>
+                    ) : (
+                      <Link
+                        component={RouterNavLink}
+                        to={link.path}
+                        color="inherit"
+                        underline="none"
+                        sx={{ width: '100%' }}
+                      >
+                        {link.title}
+                      </Link>
+                    )}
+                  </MenuItem>
+                ))}
+              </Menu>
             </Box>
 
-            {/* Hamburger Menu - visible only on mobile */}
-            <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-              <IconButton color="inherit" onClick={toggleDrawer}>
-                <MenuIcon />
-              </IconButton>
-            </Box>
+            <IconButton
+              onClick={() => window.open('https://www.instagram.com/city.gymkhana', '_blank')}
+              sx={{
+                color: 'white',
+                background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)',
+                '&:hover': { transform: 'scale(1.1)' },
+                transition: 'transform 0.3s ease',
+                width: 40,
+                height: 40,
+              }}
+            >
+              <InstagramIcon sx={{ fontSize: 24 }} />
+            </IconButton>
+          </Box>
+
+          {/* Mobile Menu Button */}
+          <Box sx={{ display: { xs: 'flex', lg: 'none' } }}>
+            <IconButton
+              onClick={toggleDrawer}
+              sx={{ color: 'var(--accent)' }}
+            >
+              <MenuIcon fontSize="large" />
+            </IconButton>
           </Box>
         </Toolbar>
       </Container>
 
-      {/* Drawer for Hamburger Menu (Mobile View) */}
-      <Drawer 
-        anchor="right" 
-        open={open} 
-        onClose={toggleDrawer} 
-        slotProps={{
-          paper: {
-            className: 'w-[250px] transition-all duration-300 ease-in-out',
-            sx: {
-              background: 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(10px)',
-            },
-          },
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={toggleDrawer}
+        PaperProps={{
+          sx: {
+            width: '100%',
+            maxWidth: '300px',
+            background: 'var(--primary)',
+            color: 'white'
+          }
         }}
       >
-        <Box role="presentation" onClick={toggleDrawer}>
+        <Box sx={{ p: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 6 }}>
+            <Avatar
+              src={logo}
+              sx={{ width: 80, height: 80, border: '2px solid var(--accent)' }}
+            />
+          </Box>
           <List>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/" sx={drawerLinkStyles}>Home</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/about" sx={drawerLinkStyles}>About</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/facility" sx={drawerLinkStyles}>Facility</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/contact-us" sx={drawerLinkStyles}>Contact</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/events" sx={drawerLinkStyles}>Events</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/achievments" sx={drawerLinkStyles}>Achievements</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link component={RouterNavLink} to="/gallery" sx={drawerLinkStyles}>Gallery</Link>
-            </ListItem>
-            <ListItem disablePadding>
-              <Link href="https://docs.google.com/forms/d/e/1FAIpQLScMGUDhw1aR9925FckHcPAE1xcwxLHf_nEZmmW4d6PHKYblhg/viewform" target="_blank" rel="noopener noreferrer" sx={drawerLinkStyles}>
-                Feedback
-              </Link>
-            </ListItem>
+            {navLinks.map((link) => (
+              <ListItem key={link.title} disablePadding sx={{ mb: 2 }}>
+                <Link
+                  component={RouterNavLink}
+                  to={link.path}
+                  onClick={toggleDrawer}
+                  underline="none"
+                  sx={{
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    color: location.pathname === link.path ? 'var(--accent)' : 'white',
+                    width: '100%',
+                    textAlign: 'center'
+                  }}
+                >
+                  {link.title}
+                </Link>
+              </ListItem>
+            ))}
+            {detailsLinks.map((link) => (
+              <ListItem key={link.title} disablePadding sx={{ mb: 2 }}>
+                <Link
+                  href={link.isExternal ? link.path : undefined}
+                  component={link.isExternal ? 'a' : RouterNavLink}
+                  to={!link.isExternal ? link.path : undefined}
+                  target={link.isExternal ? "_blank" : undefined}
+                  rel={link.isExternal ? "noopener noreferrer" : undefined}
+                  onClick={toggleDrawer}
+                  underline="none"
+                  sx={{
+                    fontFamily: 'var(--font-heading)',
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    color: 'rgba(255,255,255,0.7)',
+                    width: '100%',
+                    textAlign: 'center'
+                  }}
+                >
+                  {link.title}
+                </Link>
+              </ListItem>
+            ))}
           </List>
         </Box>
       </Drawer>

@@ -1,92 +1,82 @@
-/* General Home Styling */
-.home-container {
-  /* Modern light gradient background */
-  background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
-  padding-top: 40px;
-  padding-bottom: 40px;
-  color: #2c3e50; /* Default dark text color */
-  width: 100%;
-  min-height: calc(100vh - 90px); /* Adjust for navbar height if sticky */
-}
+/* Modern Home Styles */
 
-.home-title-box {
-  text-align: center; /* Center align for a modern hero section look */
-  margin-bottom: 60px;
-  padding: 4rem 1rem; /* More vertical padding */
-  border-radius: 12px;
+.hero-section {
   position: relative;
-  animation: fadeIn 1s ease-out;
-  /* Remove old background and shadow */
-  background: transparent;
-  box-shadow: none;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: var(--primary);
 }
 
-.home-title {
-  font-size: 3rem;
-  color: #c70404; /* Use brand's primary red */
-  margin-bottom: 20px;
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(15, 23, 42, 0.3), rgba(15, 23, 42, 0.9));
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin-bottom: 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: var(--neutral-200);
+  margin-bottom: 3rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.cta-button {
+  background: var(--gradient-accent);
+  color: var(--primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 1rem 3rem;
+  border-radius: 50px;
+  border: none;
+  font-size: 1.2rem;
   text-transform: uppercase;
   letter-spacing: 2px;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
 }
 
-.home-description {
-  font-size: 1.2rem;
-  color: #2c3e50; /* Dark slate color for readability */
-  font-weight: 500; /* Slightly bolder */
-  margin-bottom: 30px;
-  line-height: 1.6;
-  max-width: 700px; /* Constrain line width for readability */
-  margin-left: auto;
-  margin-right: auto;
+.cta-button:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 30px rgba(251, 191, 36, 0.4);
 }
 
-/* Smooth fade-in animation, slightly adjusted */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Section Styling for light theme */
-section {
-  margin-top: 40px;
-  background-color: #ffffff; /* Clean white cards for sections */
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2); /* Softer, modern shadow */
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-section:hover {
-  transform: translateY(-5px); /* Subtle lift on hover */
-  box-shadow: 0 12px 28px rgba(149, 157, 165, 0.25);
-}
-
-section h2 {
-  color: #2c3e50; /* Dark slate for section headers */
-  font-size: 2rem;
-  margin-bottom: 20px;
-}
-
-section p {
-  color: #555; /* Dark gray for paragraph text */
-  font-size: 1.1rem;
-  line-height: 1.7;
-}
-
-/* Responsive adjustments */
-@media (min-width: 1200px) {
-  .home-title {
-    font-size: 4rem;
-  }
-
-  .home-description {
-    font-size: 1.4rem;
-  }
+/* Sections */
+.section-marker {
+  display: inline-block;
+  width: 60px;
+  height: 4px;
+  background: var(--gradient-accent);
+  margin-bottom: 1rem;
+  border-radius: 2px;
 }

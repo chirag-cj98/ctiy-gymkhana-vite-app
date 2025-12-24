@@ -1,9 +1,38 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Container, Grid, Typography, Link, IconButton, Divider } from '@mui/material';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import { NavLink as RouterNavLink } from 'react-router-dom';
 import logo from '../../assets/cgca.jpg';
+import { strapiApiUrl } from '../../config/api';
 
 const Footer = () => {
+  const [contactData, setContactData] = useState({
+    address: 'City Gymkhana, Bangalore',
+    phone: '',
+    email: '',
+  });
+
+  useEffect(() => {
+    const fetchContactDetails = async () => {
+      try {
+        const response = await fetch(`${strapiApiUrl}/other-detail?populate=*`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.data) {
+            setContactData({
+              address: data.data.address || 'CITY GYMKHANA, Kenchena Halli Road, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098',
+              phone: `${data.data.contactPhone1}${data.data.contactPhone2 ? `, ${data.data.contactPhone2}` : ''}`,
+              email: data.data.contactEmail || 'Gymkhanacity@gmail.com',
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch footer contact details:", error);
+      }
+    };
+    fetchContactDetails();
+  }, []);
+
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
@@ -55,13 +84,13 @@ const Footer = () => {
               </Typography>
             </Box>
             <Typography variant="body2" sx={{ mb: 1, fontFamily: 'Poppins, sans-serif' }}>
-              Address: CITY GYMKHANA, Kenchena Halli Road, Rajarajeshwari Nagar, Bengaluru, Karnataka 560098
+              Address: {contactData.address}
             </Typography>
             <Typography variant="body2" sx={{ mb: 1, fontFamily: 'Poppins, sans-serif' }}>
-              Phone: +91 9901029957, +91 9972278833
+              Phone: {contactData.phone || '+91 9901029957, +91 9972278833'}
             </Typography>
             <Typography variant="body2" sx={{ fontFamily: 'Poppins, sans-serif' }}>
-              Email: Gymkhanacity@gmail.com
+              Email: {contactData.email}
             </Typography>
           </Grid>
 

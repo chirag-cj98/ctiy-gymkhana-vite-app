@@ -1,6 +1,202 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Box, Typography, Container, Card, CardMedia, CardContent, CircularProgress, Button } from '@mui/material';
+import { Box, Typography, Container, Card, CardMedia, CardContent, CircularProgress, Button, Fade, IconButton, Slide } from '@mui/material';
+import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import ReactMarkdown from 'react-markdown';
 import { strapiApiUrl } from '../config/api';
+
+const ImageCarousel = ({ images }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState('left');
+
+  const getImageUrl = (image) => {
+    if (!image) return '';
+    const url = image.attributes?.formats?.medium?.url ||
+      image.attributes?.url ||
+      image.formats?.medium?.url ||
+      image.url;
+
+    if (url && url.startsWith('/')) {
+      return `${strapiApiUrl.replace('/api', '')}${url}`;
+    }
+    return url;
+  };
+
+  const handleNext = () => {
+    setSlideDirection('left');
+    setActiveIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const handlePrev = () => {
+    setSlideDirection('right');
+    setActiveIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  if (!images || images.length === 0) {
+    return null;
+  }
+
+  return (
+    <Box sx={{ position: 'relative', height: '100%', minHeight: '300px', width: '100%', overflow: 'hidden', borderRadius: '12px', bgcolor: 'var(--neutral-200)' }}>
+      {images.map((image, index) => (
+        <Slide
+          key={index}
+          direction={slideDirection}
+          in={activeIndex === index}
+          mountOnEnter
+          unmountOnExit
+          timeout={500}
+        >
+          <CardMedia
+            component="img"
+            src={getImageUrl(image)}
+            alt={`About image ${index + 1}`}
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              height: '100%',
+              width: '100%',
+              objectFit: 'cover',
+            }}
+          />
+        </Slide>
+      ))}
+      {images.length > 1 && (
+        <>
+          <IconButton
+            onClick={handlePrev}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: 10,
+              transform: 'translateY(-50%)',
+              color: 'white',
+              bgcolor: 'rgba(0, 0, 0, 0.3)',
+              backdropFilter: 'blur(4px)',
+              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.6)' },
+            }}
+          >
+            <ChevronLeft />
+          </IconButton>
+          <IconButton
+            onClick={handleNext}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              right: 10,
+              transform: 'translateY(-50%)',
+              color: 'white',
+              bgcolor: 'rgba(0, 0, 0, 0.3)',
+              backdropFilter: 'blur(4px)',
+              '&:hover': { bgcolor: 'rgba(0, 0, 0, 0.6)' },
+            }}
+          >
+            <ChevronRight />
+          </IconButton>
+        </>
+      )}
+    </Box>
+  );
+};
+
+const SectionContainer = ({ title, description, images, index, id }) => {
+  const isImageRight = index % 2 === 0;
+  const isHeader = id === 'header';
+
+  // Helper to normalize image array from Strapi response
+  const normalizedImages = (() => {
+    if (!images) return [];
+    if (images.data) {
+      return Array.isArray(images.data) ? images.data : [images.data];
+    }
+    return Array.isArray(images) ? images : [images];
+  })();
+
+  const hasImages = normalizedImages.length > 0;
+
+  return (
+    <Fade in={true} timeout={1000 + (index * 200)}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          mb: 8,
+          py: { xs: 4, md: 8 },
+          px: { xs: 3, md: 6 },
+          background: isHeader ? 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)' : 'white',
+          borderRadius: '24px',
+          boxShadow: '0 20px 40px -10px rgba(0,0,0,0.05)',
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {isHeader && (
+          <Box sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '5px',
+            background: 'var(--gradient-accent)'
+          }} />
+        )}
+
+        <Typography
+          variant={isHeader ? "h2" : "h3"}
+          sx={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: isHeader ? { xs: '2.5rem', md: '4rem' } : { xs: '2rem', md: '2.5rem' },
+            fontWeight: 800,
+            color: 'var(--primary)',
+            width: '100%',
+            ...(isHeader && {
+              background: 'var(--gradient-primary)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              letterSpacing: '-1px',
+            })
+          }}
+        >
+          {title}
+        </Typography>
+
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: isImageRight ? 'row' : 'row-reverse' },
+          gap: 6,
+          alignItems: 'center',
+          width: '100%'
+        }}>
+          <Box sx={{ flex: 1, width: '100%' }}>
+            <Typography
+              component="div"
+              sx={{
+                fontFamily: 'var(--font-body)',
+                fontSize: isHeader ? { xs: '1.1rem', md: '1.25rem' } : { xs: '1rem', md: '1.1rem' },
+                color: 'var(--neutral-800)',
+                lineHeight: 1.8,
+                '& p': { mb: 2 },
+                '& strong': { fontWeight: 700, color: 'var(--primary)' },
+                '& ul': { pl: 3, mb: 2 },
+                '& li': { mb: 1 },
+                '& h1, & h2, & h3': { fontFamily: 'var(--font-heading)', color: 'var(--primary)', mt: 3, mb: 2 }
+              }}
+            >
+              <ReactMarkdown>{description}</ReactMarkdown>
+            </Typography>
+          </Box>
+
+          {hasImages && (
+            <Box sx={{ flex: 1, width: '100%', height: '400px', borderRadius: '12px', overflow: 'hidden' }}>
+              <ImageCarousel images={normalizedImages} />
+            </Box>
+          )}
+        </Box>
+      </Box>
+    </Fade>
+  );
+};
 
 const About = () => {
   const [about, setAbout] = useState(null);
@@ -17,7 +213,8 @@ const About = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const aboutResponse = await fetch(`${strapiApiUrl}/about`);
+        // Wildcard populate to get all root level fields including images
+        const aboutResponse = await fetch(`${strapiApiUrl}/about?populate=*`);
         if (!aboutResponse.ok) throw new Error('Failed to fetch about data');
         const aboutData = await aboutResponse.json();
         setAbout(aboutData.data);
@@ -45,7 +242,7 @@ const About = () => {
     if (showCoaches && coachesRef.current) {
       setTimeout(() => {
         coachesRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100); // A small delay ensures the element is rendered
+      }, 100);
     }
   }, [showCoaches]);
 
@@ -53,293 +250,297 @@ const About = () => {
     if (showTeam && teamRef.current) {
       setTimeout(() => {
         teamRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100); // A small delay ensures the element is rendered
+      }, 100);
     }
   }, [showTeam]);
 
-  const fadeInUp = {
-    'from': { opacity: 0, transform: 'translateY(30px)' },
-    'to': { opacity: 1, transform: 'translateY(0)' },
-  };
-
-  const shine = {
-    'to': {
-      transform: 'translateX(200%) skewX(-25deg)',
-    }
-  };
-
-  const cardStyle = {
-    background: 'rgba(26, 26, 26, 0.85)',
-    borderRadius: '16px',
-    boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
-    transition: 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1)',
-    width: 320,
-    border: '1px solid rgba(255, 215, 0, 0.1)',
-    opacity: 0,
-    position: 'relative',
-    overflow: 'hidden',
-    '&::before': {
-      content: '""',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '50%',
-      height: '100%',
-      background: 'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
-      transform: 'translateX(-100%) skewX(-25deg)',
-    },
-    '&:hover': {
-      transform: 'translateY(-10px)',
-      boxShadow: '0px 12px 28px rgba(0, 0, 0, 0.4)',
-      '&::before': { animation: 'shine 1.2s' },
-    },
-  };
-
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <CircularProgress sx={{ color: '#FFD700' }} />
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <CircularProgress sx={{ color: 'var(--accent)' }} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
-        <Typography color="error">Error loading page: {error}</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'var(--neutral-100)' }}>
+        <Typography color="error" variant="h6">Error loading page: {error}</Typography>
       </Box>
     );
   }
 
+  // Define the sections to render based on the flat API structure
+  const sections = [
+    // Header/Intro Section
+    {
+      id: 'header',
+      title: about?.title || 'Our Legacy',
+      description: about?.description,
+      images: about?.descriptionImage
+    },
+    // About Us
+    {
+      id: 'about',
+      title: about?.aboutTitle || 'About Us',
+      description: about?.aboutDescription,
+      images: about?.aboutImage
+    },
+    // Our Legacy
+    {
+      id: 'legacy',
+      title: about?.legacy || 'Our Legacy',
+      description: about?.legacyDescription,
+      images: about?.legacyImage
+    },
+    // Training
+    {
+      id: 'training',
+      title: about?.training || 'Training Philosophy',
+      description: about?.trainingDescription,
+      images: about?.trainingImage
+    },
+    // Tournaments
+    {
+      id: 'tournaments',
+      title: about?.tournaments || 'Tournaments',
+      description: about?.tournamentsDescription,
+      images: about?.tournamentsImage
+    },
+    // Facilities
+    {
+      id: 'facilities',
+      title: about?.facilities || 'Our Facilities',
+      description: about?.facilitiesDescription,
+      images: about?.facilitiesImage
+    },
+    // Organization
+    {
+      id: 'organization',
+      title: about?.organization || 'Organization',
+      description: about?.organizationDesciption, // Note: Typo in API field name 'Desciption' matches backend
+      images: about?.organizationImage
+    },
+    // Outro
+    {
+      id: 'outro',
+      title: about?.outro || 'Join Us',
+      description: about?.outroDescription,
+      images: about?.outroImage
+    }
+  ].filter(section => section.description); // Only render sections that have content
+
   return (
-    <Box
-      sx={{
-        '@keyframes fadeInUp': fadeInUp,
-        '@keyframes shine': shine,
-        // background removed to match Home page style
-        padding: { xs: '2rem 1rem', md: '4rem 1rem' },
-        color: '#f0f0f0',
-        width: '100%',
-        minHeight: '100vh',
-        overflowX: 'hidden',
-      }}
-    >
+    <Box sx={{ bgcolor: 'var(--neutral-100)', minHeight: '100vh', pt: '100px', pb: 8 }}>
       <Container maxWidth="xl">
-        <Box
-          sx={{
-            textAlign: 'left',
-            mb: '4rem',
-            background: 'rgba(0, 0, 0, 0)',
-            p: { xs: '1.5rem', md: '2.5rem' },
-            borderRadius: '16px',
-            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.3)',
-            animation: 'fadeInUp 1s ease-out forwards',
-          }}
-        >
-          <Typography
-            variant="h1"
-            sx={{
-              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
-              fontWeight: 700,
-              mb: '1.5rem',
-              color: '#c70404',
-              textTransform: 'uppercase',
-              letterSpacing: '2px',
-              textShadow: '1px 1px 4px rgba(0, 0, 0, 0.5)',
-            }}
-          >
-            {about?.title}
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              fontSize: { xs: '1rem', md: '1.2rem' },
-              color: 'text.secondary',
-              fontWeight: 400,
-              lineHeight: 1.7,
-              maxWidth: '80ch',
-              whiteSpace: 'pre-wrap',
-            }}
-          >
-            {about?.description}
-          </Typography>
+        {/* Render Dynamic Sections */}
+        <Box sx={{ mb: 8 }}>
+          {sections.map((section, index) => (
+            <SectionContainer
+              key={section.id}
+              index={index}
+              {...section}
+            />
+          ))}
         </Box>
 
-        {/* Button to show/hide coaching staff */}
-        <Box sx={{ textAlign: 'center', mb: '4rem', display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-          <Button // Show coaches button
+        {/* Buttons */}
+        <Box sx={{ textAlign: 'center', mb: 8, display: 'flex', justifyContent: 'center', gap: 3, flexWrap: 'wrap' }}>
+          <Button
             variant="contained"
             onClick={() => setShowCoaches(!showCoaches)}
             sx={{
-              backgroundColor: '#FFD700',
-              color: '#1a1a1a',
-              fontWeight: 'bold',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              bgcolor: showCoaches ? 'var(--accent)' : 'white',
+              color: showCoaches ? 'black' : 'var(--primary)',
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 700,
+              py: 1.5,
+              px: 4,
+              borderRadius: '50px',
+              fontSize: '1rem',
+              boxShadow: '0 10px 20px rgba(0,0,0,0.05)',
+              textTransform: 'none',
+              border: '1px solid',
+              borderColor: showCoaches ? 'var(--accent)' : 'rgba(0,0,0,0.1)',
               '&:hover': {
-                transform: 'scale(1.05)',
-                boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
-                backgroundColor: '#e6b800',
+                bgcolor: 'var(--accent)',
+                color: 'black',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 15px 30px rgba(251, 191, 36, 0.2)',
               },
             }}
           >
-            {showCoaches ? 'Hide Coaching Staff' : 'Show Coaching Staff'}
+            {showCoaches ? 'Hide Coaching Staff' : 'Meet Our Coaches'}
           </Button>
-          <Button // Show team button
+          <Button
             variant="contained"
             onClick={() => setShowTeam(!showTeam)}
             sx={{
-              backgroundColor: '#FFD700',
-              color: '#1a1a1a',
-              fontWeight: 'bold',
-              padding: '12px 24px',
-              borderRadius: '8px',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              bgcolor: showTeam ? 'var(--accent-secondary)' : 'white',
+              color: showTeam ? 'white' : 'var(--primary)',
+              fontFamily: 'var(--font-heading)',
+              fontWeight: 700,
+              py: 1.5,
+              px: 4,
+              borderRadius: '50px',
+              fontSize: '1rem',
+              boxShadow: '0 10px 20px rgba(0,0,0,0.05)',
+              textTransform: 'none',
+              border: '1px solid',
+              borderColor: showTeam ? 'var(--accent-secondary)' : 'rgba(0,0,0,0.1)',
               '&:hover': {
-                transform: 'scale(1.05)',
-                boxShadow: '0px 5px 15px rgba(255, 215, 0, 0.3)',
-                backgroundColor: '#e6b800',
+                bgcolor: 'var(--accent-secondary)',
+                color: 'white',
+                transform: 'translateY(-2px)',
+                boxShadow: '0 15px 30px rgba(239, 68, 68, 0.2)',
               },
             }}
           >
-            {showTeam ? 'Hide Team' : 'Show Team'}
+            {showTeam ? 'Hide Teams' : 'View Teams'}
           </Button>
         </Box>
 
         {/* Coaching Staff Section */}
         {showCoaches && (
-          <Box
-            ref={coachesRef}
-            sx={{
-              mt: '5rem',
-              textAlign: 'center',
-              animation: 'fadeInUp 1s 0.2s ease-out forwards',
-              opacity: 0,
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
-                fontWeight: 800,
-                color: '#c70404',
-                mb: '3rem',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
-                borderBottom: '2px solid #000',
-              }}
-            >
-              Coaching Staff
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '2.5rem',
-                justifyContent: 'center',
-              }}
-            >
-              {coach.map((c, index) => (
-                <Card
-                  key={c.id}
-                  sx={{
-                    ...cardStyle,
-                    animation: `fadeInUp 0.8s ease-out forwards`,
-                    animationDelay: `${0.3 + index * 0.1}s`,
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    height="250"
-                    image={c.image?.formats?.medium?.url || c.image?.url}
-                    alt={c.name}
-                    sx={{ objectFit: 'cover', filter: 'saturate(1.1)', transition: 'filter 0.3s ease', '&:hover': { filter: 'saturate(1.3)' } }}
-                  />
-                  <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
-                    <Typography variant="h5" sx={{ color: '#FFD700', fontWeight: 700, mb: '1rem', textTransform: 'uppercase' }}>
-                      {c.name}
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#b0b0b0', mb: '0.5rem' }}>
-                      <strong>Age:</strong> {c.age}
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#b0b0b0' }}>
-                      <strong>Experience:</strong> {c.experience}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              ))}
+          <Fade in={true}>
+            <Box ref={coachesRef} sx={{ mb: 10 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  textAlign: 'center',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 700,
+                  mb: 6,
+                  color: 'var(--primary)',
+                }}
+              >
+                World-Class Coaching
+              </Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 4 }}>
+                {coach.map((c) => (
+                  <Card
+                    key={c.id}
+                    className="card-hover"
+                    sx={{
+                      borderRadius: '20px',
+                      overflow: 'hidden',
+                      border: 'none',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                      bgcolor: 'white',
+                    }}
+                  >
+                    <Box sx={{ height: '300px', overflow: 'hidden' }}>
+                      <CardMedia
+                        component="img"
+                        height="100%"
+                        image={c.image?.formats?.medium?.url || c.image?.url}
+                        alt={c.name}
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          transition: 'transform 0.5s ease',
+                          '&:hover': { transform: 'scale(1.05)' }
+                        }}
+                      />
+                    </Box>
+                    <CardContent sx={{ p: 4 }}>
+                      <Typography variant="h5" sx={{ fontFamily: 'var(--font-heading)', fontWeight: 700, mb: 1 }}>
+                        {c.name}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'var(--accent-secondary)', fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        {c.role || 'Coach'}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Age:</strong> {c.age}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          <strong>Experience:</strong> {c.experience}
+                        </Typography>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
             </Box>
-          </Box>
+          </Fade>
         )}
 
         {/* Team Section */}
         {showTeam && (
-          <Box
-            ref={teamRef}
-            sx={{
-              mt: '5rem',
-              textAlign: 'center',
-              animation: 'fadeInUp 1s 0.2s ease-out forwards',
-              opacity: 0,
-            }}
-          >
-            <Typography
-              variant="h2"
-              sx={{
-                fontSize: { xs: '2.2rem', sm: '3rem', md: '3.5rem' },
-                fontWeight: 800,
-                color: '#c70404',
-                mb: '3rem',
-                textTransform: 'uppercase',
-                letterSpacing: '2px',
-                textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)',
-                borderBottom: '2px solid #000',
-              }}
-            >
-              Our Teams
-            </Typography>
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: '2.5rem',
-                justifyContent: 'center',
-              }}
-            >
-              {teams.map((team, index) => (
-                <Card
-                  key={team.id}
-                  sx={{
-                    ...cardStyle,
-                    animation: `fadeInUp 0.8s ease-out forwards`,
-                    animationDelay: `${0.3 + index * 0.1}s`,
-                  }}
-                >
-                  <CardMedia
-                    component="img"
-                    height="250"
-                    image={team.captainImage?.formats?.medium?.url || team.captainImage?.url}
-                    alt={team.captainName}
-                    sx={{ objectFit: 'cover', filter: 'saturate(1.1)', transition: 'filter 0.3s ease', '&:hover': { filter: 'saturate(1.3)' } }}
-                  />
-                  <CardContent sx={{ p: '1.5rem', textAlign: 'center' }}>
-                    <Typography variant="h5" sx={{ color: '#FFD700', fontWeight: 700, mb: '1rem', textTransform: 'uppercase' }}>{team.teamName}</Typography>
-                    <Typography variant="body1" sx={{ color: '#b0b0b0', mb: '0.5rem' }}><strong>Captain:</strong> {team.captainName}</Typography>
-                    <Typography variant="body1" sx={{ color: '#b0b0b0' }}><strong>Year:</strong> {team.year}</Typography>
-                  </CardContent>
-                </Card>
-              ))}
+          <Fade in={true}>
+            <Box ref={teamRef} sx={{ mb: 10 }}>
+              <Typography
+                variant="h3"
+                sx={{
+                  textAlign: 'center',
+                  fontFamily: 'var(--font-heading)',
+                  fontWeight: 700,
+                  mb: 6,
+                  color: 'var(--primary)',
+                }}
+              >
+                Our Champions
+              </Typography>
+              <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 4 }}>
+                {teams.map((team) => (
+                  <Card
+                    key={team.id}
+                    className="card-hover"
+                    sx={{
+                      borderRadius: '20px',
+                      overflow: 'hidden',
+                      border: 'none',
+                      boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+                      bgcolor: 'white',
+                    }}
+                  >
+                    <Box sx={{ height: '280px', overflow: 'hidden', position: 'relative' }}>
+                      <Box sx={{
+                        position: 'absolute',
+                        top: 15,
+                        right: 15,
+                        bgcolor: 'var(--accent)',
+                        color: 'black',
+                        fontWeight: 700,
+                        py: 0.5,
+                        px: 2,
+                        borderRadius: '20px',
+                        zIndex: 2,
+                        fontSize: '0.8rem'
+                      }}>
+                        {team.year}
+                      </Box>
+                      <CardMedia
+                        component="img"
+                        height="100%"
+                        image={team.captainImage?.formats?.medium?.url || team.captainImage?.url}
+                        alt={team.captainName}
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          transition: 'transform 0.5s ease',
+                          '&:hover': { transform: 'scale(1.05)' }
+                        }}
+                      />
+                    </Box>
+                    <CardContent sx={{ p: 4 }}>
+                      <Typography variant="h5" sx={{ fontFamily: 'var(--font-heading)', fontWeight: 700, mb: 1 }}>
+                        {team.teamName}
+                      </Typography>
+                      <Typography variant="subtitle1" sx={{ color: 'text.secondary', mb: 2 }}>
+                        Captain: <span style={{ color: 'var(--primary)', fontWeight: 600 }}>{team.captainName}</span>
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
             </Box>
-          </Box>
+          </Fade>
         )}
       </Container>
-      
     </Box>
   );
 };
